@@ -1,4 +1,3 @@
-import importlib.util
 import json
 from pathlib import Path
 from types import SimpleNamespace
@@ -7,15 +6,12 @@ import pytest
 
 
 @pytest.fixture
-def batch_module(monkeypatch):
+def batch_module():
     pytest.importorskip("selenium")
     pytest.importorskip("requests")
     pytest.importorskip("lxml")
-    path = Path(__file__).resolve().parents[1] / "scripts/batch_collect.py"
-    spec = importlib.util.spec_from_file_location("batch_collect_test", path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+    from hanzi_evolution.collection import batch
+    return batch
 
 
 def test_access_restriction_stops_remaining_heads(batch_module, monkeypatch, tmp_path):

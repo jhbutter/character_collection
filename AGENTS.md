@@ -9,6 +9,7 @@
 - 用户明确要求 clone 并调试第三方项目，允许本地修改它；上游未见 LICENSE，未经另行核验不对外重新发布其代码。
 - 已验证普通HTTP表单及编号1–10批次，翻页修复补回103张；甲骨文10字头146条记录。跨库MVP阶段曾为182条图像关联、174张不同原图；十字补采后336条关联、328张不同原图；扩字完成后当前为50字头、1023条关联、1015张不同原图。结果见reports/cross_source_mvp.md，当前基线见reports/current_quality.json。历史地区限制并不代表现在仍受限；每轮按实际响应判断。
 - 2026-10-19 13:16:47 对 robots.txt 的只读探测返回 HTTP 401，页面明示“您的IP已被封鎖”；当时按硬停止处理并保留证据 data/batches/expand_50_probe/preflight.json。同日恢复访问后完成扩字；期间一次代理中断按 blocked 停止，单次重试后续跑成功。
+- 采集实现位于 src/hanzi_evolution/collection/；scripts/*.py 仅为兼容入口，保持原命令可用。
 - scripts/expand_50.py 为扩到50字入口：默认 11–60（11–50为主，51–60补足），甲骨文每字≤5，四个跨来源，目标50个有图字头，每批≤100张，默认输出 data/dataset_50，不覆盖 data/dataset；默认 dry-run，重复执行可续跑。
 - 零结果仅在页面明确“共搜尋到 0 字”且无 VariantList/StartOrder 时记为 no_result；缺少结构、受限页或验证码仍按失败/停止处理，不把未知页记成来源未收录。
 - read_font.py 默认不联网，显式 --execute 执行。robots普通404按不存在处理；403、429、5xx、受限页及验证码必须停止，不绕过限制。

@@ -7,26 +7,29 @@
 | 核心数据层 | `src/hanzi_evolution/` | SQLAlchemy Core schema、Pydantic 输入契约、内容寻址存储、导入/导出、质量报告 |
 | 结果页解析 | `src/hanzi_evolution/xiaoxue.py` | 金文、小篆、隶变、字形演变结果页；标准字头校验、零结果、分页数量 |
 | CLI | `src/hanzi_evolution/cli.py` | `init-db`、`import-*`、`lookup`、`export`、`report`、`validate-images`；`crawl` 仍是 dry-run |
-| 采集编排 | `scripts/` | 批次入口、预算、断点续跑、来源选择、现代参考 |
+| 采集编排 | `src/hanzi_evolution/collection/` | 批次编排、预算、断点续跑、来源选择、现代参考 |
+| 兼容入口 | `scripts/` | 保留原命令，转发到 `collection` 包 |
 | 第三方抓取层 | `thirdparty/xiaoxue_crawler/` | HTTP 会话、官网表单、`HiddenFrom/PageTo` 翻页、甲骨文页面解析、图片下载校验 |
 | 运行时数据 | `data/` | SQLite、原图档案、原始响应、批次状态、交付快照；不进入根 Git |
 | 报告 | `reports/` | 采集结果、质量基线、来源审计；进入根 Git |
 
 ## 采集调用链
 
-`scripts/expand_50.py` 是当前 50 字入口：
+`scripts/expand_50.py` 只是兼容入口；实际实现是 `src/hanzi_evolution/collection/expand.py`：
 
 ```text
 scripts/expand_50.py
-├── thirdparty/read_font.preflight                 # robots 检查
-├── thirdparty/http_driver.HTTPDriver              # 请求、表单、翻页、限速
-├── thirdparty/read_font.get_xiaozhuan_list_url    # 甲骨文页面/字头/分页
-├── scripts/complete_ten.result_pages              # 跨来源页面缓存
-│   └── scripts/cross_source_mvp.collect_result
-│       └── src/hanzi_evolution/xiaoxue.parse_result_page[_or_empty]
-├── scripts/cross_source_mvp.attach_images         # 图片下载调度
-│   └── thirdparty/download_img.fetch_png / validate_image
-└── src/hanzi_evolution/store.import_records / write_directory_export
+└── src/hanzi_evolution/collection/expand.py
+    ├── collection/common.py                         # PROJECT、thirdparty 路径、save_json、停止判定
+    ├── thirdparty/read_font.preflight               # robots 检查
+    ├── thirdparty/http_driver.HTTPDriver            # 请求、表单、翻页、限速
+    ├── thirdparty/read_font.get_xiaozhuan_list_url  # 甲骨文页面/字头/分页
+    ├── collection/complete_ten.result_pages         # 跨来源页面缓存
+    │   └── collection/cross_source.collect_result
+    │       └── src/hanzi_evolution/xiaoxue.parse_result_page[_or_empty]
+    ├── collection/cross_source.attach_images        # 图片下载调度
+    │   └── thirdparty/download_img.fetch_png / validate_image
+    └── src/hanzi_evolution/store.import_records / write_directory_export
 ```
 
 ## 数据流
@@ -43,8 +46,8 @@ scripts/expand_50.py
 ## 关键目录
 
 ```text
-src/hanzi_evolution/     核心包与 Alembic
-scripts/                 批次入口（见 scripts/README.md）
+src/hanzi_evolution/     核心包、Alembic、collection/ 采集编排
+scripts/                 兼容入口（见 scripts/README.md）
 config/                  6 个来源配置
 docs/                    规划、架构、数据字典、来源审计、thirdparty 说明
 reports/                 运行报告与质量基线
@@ -55,7 +58,8 @@ data/                    运行时数据，根仓库忽略
 
 ## 已知结构债务
 
-- `scripts/` 之间通过 `sys.path` 直接 import，入口脚本同时承担编排和部分解析；后续可迁入 `src/hanzi_evolution/collection/`，但需要保持现有命令兼容。
+- `collection/` 通过 `common.py` 把 thirdparty 加入 `sys.path`；thirdparty 仍是源码级依赖，不是 pip 包。
+- `scripts/` 只保留兼容入口，避免旧命令失效；新增采集逻辑应写入 `collection/`。
 - 主 CLI 的 `hanzi crawl` 仍是 dry-run，真实采集依赖独立脚本；长期应统一成一个 adapter/调度入口。
 - thirdparty 是源码级依赖，不是 pip 包；本地修改未提交，根仓库通过 `patches/xiaoxue_crawler-local.patch` 跟踪。
 - 主要验证是离线测试，真实网络回归需要显式 `--execute`，并受来源限速与封禁风险约束。

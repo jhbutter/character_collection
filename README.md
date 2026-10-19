@@ -27,7 +27,8 @@ pytest -q
 
 ```text
 src/hanzi_evolution/     核心包：schema、导入/导出、结果页解析、CLI
-scripts/                 采集与批处理入口（见 scripts/README.md）
+  collection/            采集编排：batch、cross_source、complete_ten、expand
+scripts/                 兼容入口，实现位于 src/hanzi_evolution/collection/
 config/                  来源配置
 docs/                    规划、架构、数据字典、来源审计、thirdparty 说明
 reports/                 运行报告与质量基线
@@ -38,6 +39,7 @@ patches/                 thirdparty 本地补丁
 ```
 
 - 架构与调用链：[docs/architecture.md](docs/architecture.md)
+- 采集实现：[src/hanzi_evolution/collection/](src/hanzi_evolution/collection/)
 - thirdparty 基线与补丁：[docs/thirdparty.md](docs/thirdparty.md)
 - 采集入口索引：[scripts/README.md](scripts/README.md)
 

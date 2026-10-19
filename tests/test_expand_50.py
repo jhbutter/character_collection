@@ -1,7 +1,5 @@
 import hashlib
-import importlib.util
 import json
-from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
@@ -12,11 +10,8 @@ def expand_module():
     pytest.importorskip("selenium")
     pytest.importorskip("requests")
     pytest.importorskip("lxml")
-    path = Path(__file__).resolve().parents[1] / "scripts/expand_50.py"
-    spec = importlib.util.spec_from_file_location("expand_50_test", path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+    from hanzi_evolution.collection import expand
+    return expand
 
 
 def oracle_record():
