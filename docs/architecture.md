@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | 核心数据层 | `src/hanzi_evolution/` | SQLAlchemy Core schema、Pydantic 输入契约、内容寻址存储、导入/导出、质量报告 |
 | 结果页解析 | `src/hanzi_evolution/xiaoxue.py` | 金文、小篆、隶变、字形演变结果页；标准字头校验、零结果、分页数量 |
-| CLI | `src/hanzi_evolution/cli.py` | `init-db`、`import-*`、`lookup`、`export`、`report`、`validate-images`；`crawl` 仍是 dry-run |
+| CLI | `src/hanzi_evolution/cli.py` | `init-db`、`import-*`、`lookup`、`export`、`report`、`validate-images`、`collect-expand50`；`crawl` 仍是 dry-run |
 | 采集编排 | `src/hanzi_evolution/collection/` | 批次编排、预算、断点续跑、来源选择、现代参考 |
 | 兼容入口 | `scripts/` | 保留原命令，转发到 `collection` 包 |
 | 第三方抓取层 | `thirdparty/xiaoxue_crawler/` | HTTP 会话、官网表单、`HiddenFrom/PageTo` 翻页、甲骨文页面解析、图片下载校验 |
@@ -70,4 +70,4 @@ data/                    运行时数据，根仓库忽略
 .venv/bin/pytest -q
 ```
 
-当前 80 项离线测试通过，覆盖导入幂等、冲突回滚、图片校验、目录导出、限额、零结果、PUA/多字头选择、预算和封禁路径。
+当前 81 项离线测试通过，覆盖导入幂等、冲突回滚、图片校验、目录导出、限额、零结果、PUA/多字头选择、预算、CLI dry-run 和封禁路径。

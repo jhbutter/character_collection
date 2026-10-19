@@ -276,3 +276,9 @@ def test_directory_export_limits_each_character_style_across_sources(setup):
     assert manifest["max_images_per_character_style"] == 5
     assert manifest["skipped_style_limit_rows"] == 6
     assert write_directory_export(rows, root, output, True, True)["reused"] is True
+
+def test_cli_collect_expand50_dry_run():
+    result = CliRunner().invoke(app, ["collect-expand50", "--start-id", "11", "--end-id", "50"])
+    assert result.exit_code == 0
+    assert '"status": "dry_run"' in result.stdout
+    assert '"range": [\n    11,\n    50\n  ]' in result.stdout

@@ -133,6 +133,38 @@ def validate_images(db: DB = Path("data/hanzi.sqlite"), root: ROOT = Path("data"
         raise typer.Exit(1)
 
 
+@app.command("collect-expand50")
+def collect_expand50(
+    execute: Annotated[bool, typer.Option(help="联网执行；默认 dry-run")] = False,
+    start_id: Annotated[int, typer.Option(min=1)] = 11,
+    end_id: Annotated[int, typer.Option()] = 60,
+    target: Annotated[int, typer.Option(min=1, max=100)] = 50,
+    max_images: Annotated[int, typer.Option(min=1, max=100)] = 100,
+    interval: Annotated[float, typer.Option()] = 7,
+    folder: Annotated[Path, typer.Option()] = Path("data/batches/expand_50"),
+    output: Annotated[Path, typer.Option()] = Path("data/dataset_50"),
+    no_modern_reference: Annotated[bool, typer.Option()] = False,
+    no_export: Annotated[bool, typer.Option()] = False,
+):
+    """扩展当前 10 字到 50 个有图字头；默认只做 dry-run。"""
+    if start_id < 1 or not 0 <= end_id - start_id < 100:
+        raise typer.BadParameter("编号范围必须从 1 开始且最多 100 个编号")
+    if interval < 5:
+        raise typer.BadParameter("间隔至少 5 秒")
+    if not execute:
+        emit({"status": "dry_run", "range": [start_id, end_id], "target": target,
+              "oracle_limit": 5, "max_images": max_images, "network_requests": 0,
+              "output": str(output.resolve())})
+        return
+    from types import SimpleNamespace
+    from .collection.expand import run
+    args = SimpleNamespace(folder=folder, start_id=start_id, end_id=end_id,
+                           target=target, max_images=max_images, interval=interval,
+                           output=output, no_modern_reference=no_modern_reference,
+                           no_export=no_export)
+    raise typer.Exit(run(args))
+
+
 @app.command()
 def crawl(source: Annotated[str, typer.Option()] = "xiaoxue",
           limit: Annotated[int, typer.Option(min=1, max=100)] = 1,

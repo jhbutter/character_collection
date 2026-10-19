@@ -17,6 +17,7 @@
 ```bash
 python scripts/expand_50.py                 # dry-run
 python scripts/expand_50.py --execute       # 每批最多 100 张，重复执行续跑
+hanzi collect-expand50 --execute            # 等价 CLI 入口
 ```
 
 `collection/expand.py` 先补甲骨文到 50 个有图字头，再跨来源；目标按“有图片的字头数”计算。甲骨文每字最多 5 张；跨来源按“汉字 + 字体阶段”合计最多 5 张。零结果只在页面明确“共搜尋到 0 字”时记为 `no_result`。

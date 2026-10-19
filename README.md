@@ -186,6 +186,10 @@ python scripts/cross_source_mvp.py --execute --per-style 2 --max-images 100
 python scripts/expand_50.py                 # dry-run，不联网
 python scripts/expand_50.py --execute       # 默认 11–60；11–50 为主，51–60 仅用于补足
 python scripts/expand_50.py --execute --end-id 50   # 严格只做 11–50
+
+# 等价的 CLI 入口；仍默认 dry-run
+hanzi collect-expand50
+hanzi collect-expand50 --execute
 ```
 
 已按 11–64 号完成 40 个新增字头；11–60 中 PUA-only 或无法确认 Unicode 的编号跳过，61–64 用于补足。最终 `data/dataset_50` 为50字、919图；数据库1023条关联、1015张不同原图。所有新记录仍是 unverified/pending，逐图许可为空，属于内部待审快照。完整覆盖、跳过编号和零结果清单见 [扩字最终报告](reports/expand_50.md)。

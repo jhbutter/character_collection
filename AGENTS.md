@@ -10,10 +10,10 @@
 - 已验证普通HTTP表单及编号1–10批次，翻页修复补回103张；甲骨文10字头146条记录。跨库MVP阶段曾为182条图像关联、174张不同原图；十字补采后336条关联、328张不同原图；扩字完成后当前为50字头、1023条关联、1015张不同原图。结果见reports/cross_source_mvp.md，当前基线见reports/current_quality.json。历史地区限制并不代表现在仍受限；每轮按实际响应判断。
 - 2026-10-19 13:16:47 对 robots.txt 的只读探测返回 HTTP 401，页面明示“您的IP已被封鎖”；当时按硬停止处理并保留证据 data/batches/expand_50_probe/preflight.json。同日恢复访问后完成扩字；期间一次代理中断按 blocked 停止，单次重试后续跑成功。
 - 采集实现位于 src/hanzi_evolution/collection/；scripts/*.py 仅为兼容入口，保持原命令可用。
-- scripts/expand_50.py 为扩到50字入口：默认 11–60（11–50为主，51–60补足），甲骨文每字≤5，四个跨来源，目标50个有图字头，每批≤100张，默认输出 data/dataset_50，不覆盖 data/dataset；默认 dry-run，重复执行可续跑。
+- scripts/expand_50.py 为扩到50字入口：默认 11–60（11–50为主，51–60补足），甲骨文每字≤5，四个跨来源，目标50个有图字头，每批≤100张，默认输出 data/dataset_50，不覆盖 data/dataset；默认 dry-run，重复执行可续跑。等价 CLI 为 hanzi collect-expand50；旧 hanzi crawl 仍只做 dry-run。
 - 零结果仅在页面明确“共搜尋到 0 字”且无 VariantList/StartOrder 时记为 no_result；缺少结构、受限页或验证码仍按失败/停止处理，不把未知页记成来源未收录。
 - read_font.py 默认不联网，显式 --execute 执行。robots普通404按不存在处理；403、429、5xx、受限页及验证码必须停止，不绕过限制。
-- HTTP多页已按官网HiddenFrom/PageTo流程实现，编号2、3、4、6的两页记录均验证并下载入库。每页核对编号、连续页码、总数和跨页重复；金文、小篆、隶变、字形演变已对当前50字完成查询，继续扩大字表仍需新的首次查询核验，不自动扩大采集规模。主系统 hanzi crawl 尚未接入第三方采集器。
+- HTTP多页已按官网HiddenFrom/PageTo流程实现，编号2、3、4、6的两页记录均验证并下载入库。每页核对编号、连续页码、总数和跨页重复；金文、小篆、隶变、字形演变已对当前50字完成查询，继续扩大字表仍需新的首次查询核验，不自动扩大采集规模。主系统新增 hanzi collect-expand50 显式入口；旧 hanzi crawl 仍只做 dry-run。
 - 测试额外依赖见 thirdparty/xiaoxue_crawler/requirements.txt；第三方回归用合成HTML，不联网。
 - 合成样本 is_test=true 并使用独立数据库，不得冒充真实字形。
 - 真实样本仍 mapping_status=unverified、review_status=pending；不凭空填断代、出处或逐图许可。
@@ -35,7 +35,7 @@
 - 新来源断代仅抄录单元格明确标签，date_basis记录原文，不推断年代边界。跨库重复图保留各出处，内部image_asset按哈希去重；导出文件数和不同原图数分别报告。
 
 - 最终tree目录统一按“汉字 + 字体目录”跨来源/具体年代最多5张，按glyph_id升序选择，不足不补；适用于CLI、甲骨批次及跨库MVP的目录导出。原始档案、数据库及CSV/JSONL完整导出保留全部记录。
-- 扩字已完成：数据库50字头、1023条关联、1015张不同原图；data/dataset_50为50字、919图；data/dataset保留10字、232图历史快照；data/dataset_50_smoke11保留11字、244图烟测快照。11–64中PUA-only或无法确认Unicode的编号跳过，61–64用于补足。所有记录仍待审阅，publishable_glyph_count=0。80项离线测试通过，包括零结果、PUA/多字头选择、限额、复跑与封禁路径。
+- 扩字已完成：数据库50字头、1023条关联、1015张不同原图；data/dataset_50为50字、919图；data/dataset保留10字、232图历史快照；data/dataset_50_smoke11保留11字、244图烟测快照。11–64中PUA-only或无法确认Unicode的编号跳过，61–64用于补足。所有记录仍待审阅，publishable_glyph_count=0。81项离线测试通过，包括零结果、PUA/多字头选择、限额、复跑、CLI dry-run 与封禁路径。
 
 - 2026-10-18 用户要求清理冗余，已删除9个历史dataset快照（968个重复图片文件）。当前保留 data/dataset（10字/232图历史）、data/dataset_50（50字/919图最终）和 data/dataset_50_smoke11（11字/244图烟测）；上文的旧快照/备份路径为历史记录。数据库、data/images、data/raw、data/batches保留用于追溯及复跑。
 
