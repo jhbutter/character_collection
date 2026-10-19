@@ -1,0 +1,9 @@
+{
+  "id": "sinica_xiaoxue_modern_reference",
+  "name": "小学堂现代楷书字头参考（非历史楷书样本）",
+  "url": "https://xiaoxue.iis.sinica.edu.tw/yanbian/",
+  "license_id": "CC0-1.0",
+  "license_url": "https://xiaoxue.iis.sinica.edu.tw/License/License",
+  "audit_status": "import_only",
+  "is_test": false
+}

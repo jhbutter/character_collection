@@ -1,0 +1,470 @@
+{
+  "started_at": "2026-10-18T14:48:00.697538+00:00",
+  "status": "budget_reached",
+  "downloaded_this_run": 100,
+  "records": [
+    {
+      "character": "一",
+      "source": "jinwen",
+      "status": "complete",
+      "available": 26,
+      "selected": 2,
+      "styles": {
+        "jinwen": 2
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 2
+    },
+    {
+      "character": "一",
+      "source": "xiaozhuan",
+      "status": "complete",
+      "available": 2,
+      "selected": 0,
+      "styles": {},
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 0
+    },
+    {
+      "character": "一",
+      "source": "lishu",
+      "status": "complete",
+      "available": 16,
+      "selected": 4,
+      "styles": {
+        "qinwenzi": 3,
+        "lishu": 1
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 4
+    },
+    {
+      "character": "一",
+      "source": "yanbian",
+      "status": "complete",
+      "available": 14,
+      "selected": 0,
+      "styles": {},
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 0
+    },
+    {
+      "character": "上",
+      "source": "jinwen",
+      "status": "complete",
+      "available": 63,
+      "selected": 5,
+      "styles": {
+        "jinwen": 5
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 5
+    },
+    {
+      "character": "上",
+      "source": "xiaozhuan",
+      "status": "failed",
+      "error": "结果字头与查询汉字不一致，不自动建立跨库映射",
+      "error_type": "ValueError"
+    },
+    {
+      "character": "上",
+      "source": "lishu",
+      "status": "complete",
+      "available": 31,
+      "selected": 10,
+      "styles": {
+        "lishu": 5,
+        "qinwenzi": 5
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 10
+    },
+    {
+      "character": "上",
+      "source": "yanbian",
+      "status": "failed",
+      "error": "结果字头与查询汉字不一致，不自动建立跨库映射",
+      "error_type": "ValueError"
+    },
+    {
+      "character": "旁",
+      "source": "jinwen",
+      "status": "complete",
+      "available": 8,
+      "selected": 5,
+      "styles": {
+        "jinwen": 5
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 5
+    },
+    {
+      "character": "旁",
+      "source": "xiaozhuan",
+      "status": "failed",
+      "error": "结果字头与查询汉字不一致，不自动建立跨库映射",
+      "error_type": "ValueError"
+    },
+    {
+      "character": "旁",
+      "source": "lishu",
+      "status": "complete",
+      "available": 19,
+      "selected": 9,
+      "styles": {
+        "qinwenzi": 4,
+        "lishu": 5
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 9
+    },
+    {
+      "character": "旁",
+      "source": "yanbian",
+      "status": "failed",
+      "error": "结果字头与查询汉字不一致，不自动建立跨库映射",
+      "error_type": "ValueError"
+    },
+    {
+      "character": "下",
+      "source": "jinwen",
+      "status": "complete",
+      "available": 24,
+      "selected": 5,
+      "styles": {
+        "jinwen": 5
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 5
+    },
+    {
+      "character": "下",
+      "source": "xiaozhuan",
+      "status": "failed",
+      "error": "结果字头与查询汉字不一致，不自动建立跨库映射",
+      "error_type": "ValueError"
+    },
+    {
+      "character": "下",
+      "source": "lishu",
+      "status": "complete",
+      "available": 25,
+      "selected": 8,
+      "styles": {
+        "lishu": 5,
+        "qinwenzi": 3
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 8
+    },
+    {
+      "character": "下",
+      "source": "yanbian",
+      "status": "failed",
+      "error": "结果字头与查询汉字不一致，不自动建立跨库映射",
+      "error_type": "ValueError"
+    },
+    {
+      "character": "示",
+      "source": "jinwen",
+      "status": "complete",
+      "available": 3,
+      "selected": 3,
+      "styles": {
+        "jinwen": 3
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 3
+    },
+    {
+      "character": "示",
+      "source": "xiaozhuan",
+      "status": "failed",
+      "error": "结果字头与查询汉字不一致，不自动建立跨库映射",
+      "error_type": "ValueError"
+    },
+    {
+      "character": "示",
+      "source": "lishu",
+      "status": "complete",
+      "available": 3,
+      "selected": 3,
+      "styles": {
+        "lishu": 3
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 3
+    },
+    {
+      "character": "示",
+      "source": "yanbian",
+      "status": "complete",
+      "available": 19,
+      "selected": 6,
+      "styles": {
+        "zhanguowenzi": 3,
+        "chuwenzi": 1,
+        "shuowen_guwen": 1,
+        "xiaozhuan": 1
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 6
+    },
+    {
+      "character": "彔",
+      "source": "jinwen",
+      "status": "complete",
+      "available": 43,
+      "selected": 5,
+      "styles": {
+        "jinwen": 5
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 5
+    },
+    {
+      "character": "彔",
+      "source": "xiaozhuan",
+      "status": "failed",
+      "error": "结果字头与查询汉字不一致，不自动建立跨库映射",
+      "error_type": "ValueError"
+    },
+    {
+      "character": "彔",
+      "source": "lishu",
+      "status": "failed",
+      "error": "结果字头与查询汉字不一致，不自动建立跨库映射",
+      "error_type": "ValueError"
+    },
+    {
+      "character": "彔",
+      "source": "yanbian",
+      "status": "complete",
+      "available": 16,
+      "selected": 7,
+      "styles": {
+        "jiaguwen": 3,
+        "chuwenzi": 2,
+        "xiaozhuan": 1,
+        "lishu": 1
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 7
+    },
+    {
+      "character": "元",
+      "source": "jinwen",
+      "status": "failed",
+      "error": "结果字头与查询汉字不一致，不自动建立跨库映射",
+      "error_type": "ValueError"
+    },
+    {
+      "character": "元",
+      "source": "xiaozhuan",
+      "status": "complete",
+      "available": 1,
+      "selected": 1,
+      "styles": {
+        "xiaozhuan": 1
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 1
+    },
+    {
+      "character": "元",
+      "source": "lishu",
+      "status": "complete",
+      "available": 18,
+      "selected": 7,
+      "styles": {
+        "lishu": 5,
+        "qinwenzi": 2
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 7
+    },
+    {
+      "character": "元",
+      "source": "yanbian",
+      "status": "failed",
+      "error": "结果字头与查询汉字不一致，不自动建立跨库映射",
+      "error_type": "ValueError"
+    },
+    {
+      "character": "天",
+      "source": "jinwen",
+      "status": "complete",
+      "available": 81,
+      "selected": 1,
+      "styles": {
+        "jinwen": 1
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 1
+    },
+    {
+      "character": "天",
+      "source": "xiaozhuan",
+      "status": "complete",
+      "available": 1,
+      "selected": 0,
+      "styles": {},
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 0
+    },
+    {
+      "character": "天",
+      "source": "lishu",
+      "status": "complete",
+      "available": 26,
+      "selected": 1,
+      "styles": {
+        "lishu": 1
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 1
+    },
+    {
+      "character": "天",
+      "source": "yanbian",
+      "status": "complete",
+      "available": 15,
+      "selected": 0,
+      "styles": {},
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 0
+    },
+    {
+      "character": "吏",
+      "source": "jinwen",
+      "status": "failed",
+      "error": "结果字头与查询汉字不一致，不自动建立跨库映射",
+      "error_type": "ValueError"
+    },
+    {
+      "character": "吏",
+      "source": "xiaozhuan",
+      "status": "failed",
+      "error": "结果字头与查询汉字不一致，不自动建立跨库映射",
+      "error_type": "ValueError"
+    },
+    {
+      "character": "吏",
+      "source": "lishu",
+      "status": "complete",
+      "available": 16,
+      "selected": 8,
+      "styles": {
+        "qinwenzi": 3,
+        "lishu": 5
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 8
+    },
+    {
+      "character": "吏",
+      "source": "yanbian",
+      "status": "failed",
+      "error": "结果字头与查询汉字不一致，不自动建立跨库映射",
+      "error_type": "ValueError"
+    },
+    {
+      "character": "帝",
+      "source": "jinwen",
+      "status": "complete",
+      "available": 18,
+      "selected": 5,
+      "styles": {
+        "jinwen": 5
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 5
+    },
+    {
+      "character": "帝",
+      "source": "xiaozhuan",
+      "status": "complete",
+      "available": 2,
+      "selected": 2,
+      "styles": {
+        "xiaozhuan": 1,
+        "shuowen_guwen": 1
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 2
+    },
+    {
+      "character": "帝",
+      "source": "lishu",
+      "status": "failed",
+      "error": "达到MVP图片预算，停止下载",
+      "error_type": "RuntimeError"
+    }
+  ],
+  "finished_at": "2026-10-18T15:04:07.996312+00:00",
+  "quality": {
+    "character_count_including_test": 10,
+    "real_glyph_count": 281,
+    "real_with_image_character_count": 10,
+    "real_image_count": 273,
+    "test_glyph_count": 0,
+    "publishable_glyph_count": 0,
+    "unique_image_count_including_test": 273,
+    "image_validity_rate": 1.0,
+    "source_traceability_rate": 1.0,
+    "coverage": {
+      "unknown / jiaguwen": 146,
+      "商代晚期 / jinwen": 14,
+      "unknown / xiaozhuan": 8,
+      "unknown / shuowen_guwen": 4,
+      "秦 / qinwenzi": 24,
+      "西漢 / lishu": 28,
+      "秦 / lishu": 6,
+      "商 / jiaguwen": 6,
+      "西周早期 / jinwen": 14,
+      "戰國.齊 / zhanguowenzi": 2,
+      "戰國.楚 / chuwenzi": 6,
+      "unknown / kaishu_reference": 4,
+      "戰國.秦 / zhanguowenzi": 3,
+      "unknown / lishu": 2,
+      "unknown / jinwen": 1,
+      "西周中期 / jinwen": 5,
+      "西周晚期 / jinwen": 4,
+      "東漢 / lishu": 3,
+      "戰國.晉 / zhanguowenzi": 1
+    },
+    "image_failures": []
+  },
+  "export": {
+    "character_count": 10,
+    "glyph_count": 177,
+    "image_file_count": 177,
+    "output": "/Users/zhanghao/Files/program/character/data/dataset_complete_ten",
+    "reused": false
+  }
+}

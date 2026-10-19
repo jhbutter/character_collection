@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hanzi-evolution"
+version = "0.1.0"
+description = "可追溯的汉字历时字形本地资料库"
+requires-python = ">=3.11"
+dependencies = ["SQLAlchemy>=2,<3", "alembic>=1.13,<2", "pydantic>=2,<3", "typer>=0.12,<1", "Pillow>=11,<13", "beautifulsoup4>=4.12,<5", "lxml>=5,<7"]
+
+[project.optional-dependencies]
+collection = ["requests>=2.31,<3", "selenium>=4.20,<5"]
+test = ["pytest>=8,<10"]
+
+[project.scripts]
+hanzi = "hanzi_evolution.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

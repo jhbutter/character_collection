@@ -1,0 +1,181 @@
+{
+  "started_at": "2026-10-18T14:20:37.016828+00:00",
+  "characters": [
+    "一",
+    "天"
+  ],
+  "sampling_per_source_style": 2,
+  "downloaded_this_run": 28,
+  "status": "finished",
+  "records": [
+    {
+      "source": "jinwen",
+      "character": "一",
+      "source_record_id": "1",
+      "pages": 2,
+      "available": 26,
+      "sampled": 2,
+      "styles": {
+        "jinwen": 2
+      },
+      "status": "sample_imported",
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 2
+    },
+    {
+      "source": "jinwen",
+      "character": "天",
+      "source_record_id": "3",
+      "pages": 5,
+      "available": 81,
+      "sampled": 2,
+      "styles": {
+        "jinwen": 2
+      },
+      "status": "sample_imported",
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 2
+    },
+    {
+      "source": "xiaozhuan",
+      "character": "一",
+      "source_record_id": "1",
+      "pages": 1,
+      "available": 2,
+      "sampled": 2,
+      "styles": {
+        "xiaozhuan": 1,
+        "shuowen_guwen": 1
+      },
+      "status": "sample_imported",
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 2
+    },
+    {
+      "source": "xiaozhuan",
+      "character": "天",
+      "source_record_id": "3",
+      "pages": 1,
+      "available": 1,
+      "sampled": 1,
+      "styles": {
+        "xiaozhuan": 1
+      },
+      "status": "sample_imported",
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 1
+    },
+    {
+      "source": "lishu",
+      "character": "一",
+      "source_record_id": "1",
+      "pages": 1,
+      "available": 16,
+      "sampled": 4,
+      "styles": {
+        "qinwenzi": 2,
+        "lishu": 2
+      },
+      "status": "sample_imported",
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 4
+    },
+    {
+      "source": "lishu",
+      "character": "天",
+      "source_record_id": "3",
+      "pages": 2,
+      "available": 26,
+      "sampled": 4,
+      "styles": {
+        "lishu": 2,
+        "qinwenzi": 2
+      },
+      "status": "sample_imported",
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 4
+    },
+    {
+      "source": "yanbian",
+      "character": "一",
+      "source_record_id": "1",
+      "pages": 1,
+      "available": 14,
+      "sampled": 9,
+      "styles": {
+        "jiaguwen": 1,
+        "jinwen": 1,
+        "zhanguowenzi": 1,
+        "chuwenzi": 2,
+        "shuowen_guwen": 1,
+        "xiaozhuan": 1,
+        "lishu": 2
+      },
+      "status": "sample_imported",
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 9
+    },
+    {
+      "source": "yanbian",
+      "character": "天",
+      "source_record_id": "3",
+      "pages": 1,
+      "available": 15,
+      "sampled": 10,
+      "styles": {
+        "jiaguwen": 2,
+        "jinwen": 2,
+        "zhanguowenzi": 2,
+        "chuwenzi": 1,
+        "xiaozhuan": 1,
+        "lishu": 2
+      },
+      "status": "sample_imported",
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 10
+    }
+  ],
+  "finished_at": "2026-10-18T14:24:28.712140+00:00",
+  "quality": {
+    "character_count_including_test": 10,
+    "real_glyph_count": 182,
+    "real_with_image_character_count": 10,
+    "real_image_count": 174,
+    "test_glyph_count": 0,
+    "publishable_glyph_count": 0,
+    "unique_image_count_including_test": 174,
+    "image_validity_rate": 1.0,
+    "source_traceability_rate": 1.0,
+    "coverage": {
+      "unknown / jiaguwen": 146,
+      "商代晚期 / jinwen": 5,
+      "unknown / xiaozhuan": 4,
+      "unknown / shuowen_guwen": 2,
+      "秦 / qinwenzi": 4,
+      "西漢 / lishu": 5,
+      "秦 / lishu": 3,
+      "商 / jiaguwen": 3,
+      "西周早期 / jinwen": 2,
+      "戰國.齊 / zhanguowenzi": 2,
+      "戰國.楚 / chuwenzi": 3,
+      "unknown / kaishu_reference": 2,
+      "戰國.秦 / zhanguowenzi": 1
+    },
+    "image_failures": []
+  },
+  "export": {
+    "character_count": 10,
+    "glyph_count": 182,
+    "image_file_count": 182,
+    "output": "/Users/zhanghao/Files/program/character/data/dataset_cross_source_mvp",
+    "reused": false
+  }
+}

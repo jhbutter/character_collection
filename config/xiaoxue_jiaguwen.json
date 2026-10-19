@@ -1,0 +1,9 @@
+{
+  "id": "sinica_xiaoxue_jiaguwen",
+  "name": "小学堂甲骨文（单条查询已验证，主系统仅离线导入）",
+  "url": "https://xiaoxue.iis.sinica.edu.tw/jiaguwen/",
+  "license_id": "CC0-1.0",
+  "license_url": "https://xiaoxue.iis.sinica.edu.tw/License/License",
+  "audit_status": "import_only",
+  "is_test": false
+}

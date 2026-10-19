@@ -1,0 +1,121 @@
+{
+  "started_at": "2026-10-18T13:19:51.110330+00:00",
+  "range": [
+    1,
+    10
+  ],
+  "requested_heads": 10,
+  "download_limit": 100,
+  "downloaded_this_run": 40,
+  "records": [
+    {
+      "source_record_id": 1,
+      "started_at": "2026-10-18T13:19:51.546231+00:00",
+      "status": "already_in_database"
+    },
+    {
+      "source_record_id": 2,
+      "started_at": "2026-10-18T13:19:51.549660+00:00",
+      "status": "failed",
+      "error_type": "RuntimeError",
+      "error": "HTTP 模式仅验证了单页，发现下一页时停止，不输出不完整记录"
+    },
+    {
+      "source_record_id": 3,
+      "started_at": "2026-10-18T13:20:06.356465+00:00",
+      "status": "failed",
+      "error_type": "RuntimeError",
+      "error": "HTTP 模式仅验证了单页，发现下一页时停止，不输出不完整记录"
+    },
+    {
+      "source_record_id": 4,
+      "started_at": "2026-10-18T13:20:20.816538+00:00",
+      "status": "failed",
+      "error_type": "RuntimeError",
+      "error": "HTTP 模式仅验证了单页，发现下一页时停止，不输出不完整记录"
+    },
+    {
+      "source_record_id": 5,
+      "started_at": "2026-10-18T13:20:35.426286+00:00",
+      "status": "imported",
+      "character": "上",
+      "image_count": 5,
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 5
+    },
+    {
+      "source_record_id": 6,
+      "started_at": "2026-10-18T13:21:17.986182+00:00",
+      "status": "failed",
+      "error_type": "RuntimeError",
+      "error": "HTTP 模式仅验证了单页，发现下一页时停止，不输出不完整记录"
+    },
+    {
+      "source_record_id": 7,
+      "started_at": "2026-10-18T13:21:39.283747+00:00",
+      "status": "imported",
+      "character": "旁",
+      "image_count": 8,
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 8
+    },
+    {
+      "source_record_id": 8,
+      "started_at": "2026-10-18T13:22:42.959048+00:00",
+      "status": "imported",
+      "character": "下",
+      "image_count": 12,
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 12
+    },
+    {
+      "source_record_id": 9,
+      "started_at": "2026-10-18T13:24:21.564182+00:00",
+      "status": "imported",
+      "character": "示",
+      "image_count": 14,
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 14
+    },
+    {
+      "source_record_id": 10,
+      "started_at": "2026-10-18T13:26:14.242700+00:00",
+      "status": "imported",
+      "character": "彔",
+      "image_count": 1,
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 1
+    }
+  ],
+  "status": "finished",
+  "finished_at": "2026-10-18T13:26:35.708682+00:00",
+  "quality": {
+    "character_count_including_test": 6,
+    "real_glyph_count": 43,
+    "real_with_image_character_count": 6,
+    "real_image_count": 43,
+    "test_glyph_count": 0,
+    "publishable_glyph_count": 0,
+    "unique_image_count_including_test": 43,
+    "image_validity_rate": 1.0,
+    "source_traceability_rate": 1.0,
+    "coverage": {
+      "unknown / jiaguwen": 43
+    },
+    "image_failures": []
+  },
+  "attempted_heads": 10,
+  "not_attempted_ids": [],
+  "export": {
+    "character_count": 6,
+    "glyph_count": 43,
+    "image_file_count": 43,
+    "output": "/Users/zhanghao/Files/program/character/data/dataset_batch_10",
+    "reused": false
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "character_count_including_test": 1,
+  "real_glyph_count": 0,
+  "real_with_image_character_count": 0,
+  "real_image_count": 0,
+  "test_glyph_count": 1,
+  "publishable_glyph_count": 0,
+  "unique_image_count_including_test": 1,
+  "image_validity_rate": 1.0,
+  "source_traceability_rate": null,
+  "coverage": {},
+  "image_failures": []
+}

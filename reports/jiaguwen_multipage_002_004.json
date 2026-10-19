@@ -1,0 +1,68 @@
+{
+  "started_at": "2026-10-18T13:49:54.420359+00:00",
+  "range": [
+    2,
+    4
+  ],
+  "requested_heads": 3,
+  "download_limit": 100,
+  "downloaded_this_run": 77,
+  "records": [
+    {
+      "source_record_id": 2,
+      "started_at": "2026-10-18T13:49:54.819247+00:00",
+      "status": "imported",
+      "character": "元",
+      "image_count": 33,
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 33
+    },
+    {
+      "source_record_id": 3,
+      "started_at": "2026-10-18T13:54:01.045433+00:00",
+      "status": "imported",
+      "character": "天",
+      "image_count": 22,
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 22
+    },
+    {
+      "source_record_id": 4,
+      "started_at": "2026-10-18T13:56:57.688953+00:00",
+      "status": "imported",
+      "character": "吏",
+      "image_count": 22,
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 22
+    }
+  ],
+  "status": "finished",
+  "finished_at": "2026-10-18T13:59:54.650126+00:00",
+  "quality": {
+    "character_count_including_test": 9,
+    "real_glyph_count": 120,
+    "real_with_image_character_count": 9,
+    "real_image_count": 120,
+    "test_glyph_count": 0,
+    "publishable_glyph_count": 0,
+    "unique_image_count_including_test": 120,
+    "image_validity_rate": 1.0,
+    "source_traceability_rate": 1.0,
+    "coverage": {
+      "unknown / jiaguwen": 120
+    },
+    "image_failures": []
+  },
+  "attempted_heads": 3,
+  "not_attempted_ids": [],
+  "export": {
+    "character_count": 9,
+    "glyph_count": 120,
+    "image_file_count": 120,
+    "output": "/Users/zhanghao/Files/program/character/data/dataset_pagination_part1",
+    "reused": false
+  }
+}

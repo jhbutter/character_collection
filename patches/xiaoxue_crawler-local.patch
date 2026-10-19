@@ -1,0 +1,706 @@
+diff --git a/download_img.py b/download_img.py
+index 8b49753..d7b3ddf 100644
+--- a/download_img.py
++++ b/download_img.py
+@@ -1,42 +1,140 @@
+-import time
+ import argparse
+-import os
+-from crawler import load_jsonl, create_folder
+-import subprocess
++import hashlib
++from io import BytesIO
++import json
++from pathlib import Path
++import sys
++import time
++from types import SimpleNamespace
++from urllib.parse import urlsplit
++
++from PIL import Image
++import requests
++
++from crawler import dump_jsonl, load_jsonl
++from read_font import preflight
+ 
+ 
+-def _parse_args():
+-    parser = argparse.ArgumentParser(
+-        description="爬蟲--小學堂網頁"
+-    )
++def validate_image(data, declared_mime):
++    with Image.open(BytesIO(data)) as image:
++        if image.width * image.height > 40_000_000:
++            raise ValueError("图片像素超过上限")
++        fmt, width, height = image.format, image.width, image.height
++        if fmt not in {"PNG", "JPEG", "GIF", "TIFF", "WEBP"}:
++            raise ValueError("不支持的图片格式")
++        mime = Image.MIME[fmt]
++        if declared_mime.split(";", 1)[0].lower() != mime:
++            raise ValueError("响应 MIME 与真实图片格式不一致")
++        image.verify()
++    with Image.open(BytesIO(data)) as image:
++        image.load()
++    return {"sha256": hashlib.sha256(data).hexdigest(), "mime": mime,
++            "width": width, "height": height, "format": fmt}
+ 
+-    parser.add_argument('--save_path', type=str, required=False, help='save_path', default='./font_crawler/jiaguwen')
+-    parser.add_argument('--file_list', type=str, required=False, help='file_list', default='./font_crawler/jiaguwen/jiaguwen3.jsonl')
+ 
++def main():
++    parser = argparse.ArgumentParser(description="小学堂图片下载调试版，默认仅列出任务")
++    parser.add_argument("--save_path", type=Path, required=True)
++    parser.add_argument("--file_list", type=Path, required=True)
++    parser.add_argument("--limit", type=int, default=3)
++    parser.add_argument("--interval", type=float, default=7)
++    parser.add_argument("--execute", action="store_true")
++    parser.add_argument("--user-agent", default="HanziResearchDebug/0.1 (+https://github.com/EvaWang/xiaoxue_crawler)")
+     args = parser.parse_args()
+-    return args
+-
+-if __name__ == '__main__':
+-
+-    args = _parse_args()
+-    print("Start crawlering...")
+-
+-    folder_path = os.path.join(args.save_path, "img")
+-    create_folder(folder_path)
+-    char_list = load_jsonl(args.file_list)
+-
+-    for char in char_list:
+-        img_list = char["imgList"]
+-        id = char["id"]
+-        print(id)
+-        
+-        for img in img_list: 
+-            if img["desc"] != '字頭':
+-                print(img["img_url"])
+-                # print(f"-O {folder_path}/{id}_{img['img_id']}.png")
+-                subprocess.run(["wget", "-O", f"{folder_path}/{id}_{img['img_id']}.png", img["img_url"]])
+-                # subprocess.run(["wget", f"-O {folder_path}/{id}_{img['img_id']}.png", img["img_url"]])
+-                time.sleep(3)
+-
+-    print("Crawler done.")
+-    
++    if not 1 <= args.limit <= 100 or args.interval < 5:
++        parser.error("下载上限1至100张，间隔至少5秒")
++    tasks = []
++    for record in load_jsonl(str(args.file_list)):
++        for image in record["imgList"]:
++            if image["desc"].strip() in {"字頭", "楷書字型"}:
++                continue
++            if not str(record["id"]).isdecimal() or not str(image["img_id"]).isdecimal():
++                parser.error("记录编号和图片编号必须为非负整数")
++            url = image["img_url"]
++            parts = urlsplit(url)
++            if (parts.scheme != "https" or parts.hostname != "xiaoxue.iis.sinica.edu.tw"
++                    or parts.port not in (None, 443) or parts.username is not None):
++                parser.error("仅允许官方 HTTPS 图片地址")
++            tasks.append((record, image))
++    tasks = tasks[:args.limit]
++    if not args.execute:
++        print(json.dumps({"status": "dry_run", "image_tasks": len(tasks), "network_requests": 0}))
++        return 0
++    args.save_path.mkdir(parents=True, exist_ok=True)
++    folder = args.save_path / "img"
++    folder.mkdir(parents=True, exist_ok=True)
++    try:
++        gate = SimpleNamespace(user_agent=args.user_agent, interval=args.interval,
++            target_url="https://xiaoxue.iis.sinica.edu.tw/jiaguwen/?ZiOrder=%d", start_idx=1)
++        preflight(gate, args.save_path)
++        session = requests.Session()
++        session.headers["User-Agent"] = args.user_agent
++        try:
++            for record, image in tasks:
++                url = image["img_url"]
++                if getattr(gate, "robots", None) and not gate.robots.can_fetch(args.user_agent, url):
++                    raise ValueError("robots 不允许图片地址")
++                time.sleep(gate.interval)
++                target = folder / f"{record['id']}_{image['img_id']}.png"
++                if target.exists():
++                    metadata = validate_image(target.read_bytes(), "image/png")
++                else:
++                    with session.get(url, stream=True, timeout=25, allow_redirects=False) as response:
++                        response.raise_for_status()
++                        mime = response.headers.get("Content-Type", "")
++                        if response.status_code != 200 or not mime.lower().startswith("image/"):
++                            raise ValueError("图片请求未返回成功的图像响应")
++                        chunks, size = [], 0
++                        for chunk in response.iter_content(65536):
++                            size += len(chunk)
++                            if size > 20 * 1024 * 1024:
++                                raise ValueError("图片超过20 MiB")
++                            chunks.append(chunk)
++                        data = b"".join(chunks)
++                    metadata = validate_image(data, mime)
++                    if metadata["format"] != "PNG":
++                        raise ValueError("本次兼容导入要求PNG，不将其他格式伪装为PNG")
++                    partial = target.with_suffix(".part")
++                    partial.write_bytes(data)
++                    partial.replace(target)
++                dump_jsonl({"id": record["id"], "img_id": image["img_id"],
++                    "source_url": record.get("source_url"), "image_url": url,
++                    "citation": image["desc"], "path": str(target), **metadata},
++                    str(args.save_path / "downloads.jsonl"))
++        finally:
++            session.close()
++        return 0
++    except (RuntimeError, requests.RequestException, OSError, ValueError) as error:
++        dump_jsonl({"status": "failed", "error_type": type(error).__name__, "error": str(error)},
++                   str(args.save_path / "download_errors.jsonl"))
++        print(str(error), file=sys.stderr)
++        return 2
++
++
++def fetch_png(session, url, max_bytes=20 * 1024 * 1024):
++    from read_font import check_page
++    parts = urlsplit(url)
++    if (parts.scheme != "https" or parts.hostname != "xiaoxue.iis.sinica.edu.tw"
++            or parts.port not in (None, 443) or parts.username is not None):
++        raise ValueError("仅允许官方HTTPS图片地址")
++    with session.get(url, stream=True, timeout=25, allow_redirects=False) as response:
++        response.raise_for_status()
++        mime = response.headers.get("Content-Type", "")
++        if response.status_code != 200 or not mime.lower().startswith("image/"):
++            check_page(response.text)
++            raise ValueError("图片请求没有返回图像")
++        chunks, size = [], 0
++        for chunk in response.iter_content(65536):
++            size += len(chunk)
++            if size > max_bytes:
++                raise ValueError("图片超过大小上限")
++            chunks.append(chunk)
++    data = b"".join(chunks)
++    metadata = validate_image(data, mime)
++    if metadata["format"] != "PNG":
++        raise ValueError("已核验的来源图像应为PNG")
++    return data, metadata
++
++
++if __name__ == "__main__":
++    sys.exit(main())
+diff --git a/http_driver.py b/http_driver.py
+new file mode 100644
+index 0000000..3dc90e6
+--- /dev/null
++++ b/http_driver.py
+@@ -0,0 +1,103 @@
++import hashlib
++import json
++from pathlib import Path
++import re
++import time
++from types import SimpleNamespace
++from urllib.parse import urljoin, urlsplit
++
++from bs4 import BeautifulSoup
++import requests
++from selenium.common.exceptions import NoSuchElementException
++
++
++def form_fields(form):
++    fields = {item["name"]: item.get("value", "") for item in form.select("input[name]")
++              if not item.has_attr("disabled")}
++    for select in form.select("select[name]"):
++        option = select.find("option", selected=True) or select.find("option")
++        if option:
++            fields[select["name"]] = option.get("value", option.get_text())
++    return fields
++
++
++class HTTPDriver:
++    def __init__(self, args, folder, check_page):
++        self.args = args
++        self.folder = Path(folder)
++        self.check_page = check_page
++        self.session = requests.Session()
++        self.session.headers["User-Agent"] = args.user_agent
++        self.last_request = 0
++        self.page_source = ""
++        self.current_url = ""
++
++    def request(self, method, url, data=None):
++        for _ in range(4):
++            parts = urlsplit(url)
++            if (parts.scheme != "https" or parts.hostname != "xiaoxue.iis.sinica.edu.tw"
++                    or parts.port not in (None, 443) or parts.username is not None):
++                raise RuntimeError("停止访问非官方 HTTPS 地址")
++            if getattr(self.args, "robots", None) and not self.args.robots.can_fetch(self.args.user_agent, url):
++                raise RuntimeError("robots 不允许查询表单地址")
++            time.sleep(max(0, self.args.interval - (time.monotonic() - self.last_request)))
++            self.last_request = time.monotonic()
++            response = self.session.request(method, url, data=data, timeout=25, allow_redirects=False)
++            digest = hashlib.sha256(response.content).hexdigest()
++            raw = self.folder / "raw" / f"http-{digest}.html"
++            raw.parent.mkdir(parents=True, exist_ok=True)
++            raw.write_bytes(response.content)
++            entry = {"method": method, "url": url, "fields": data,
++                     "status_code": response.status_code, "sha256": digest, "path": str(raw)}
++            with (self.folder / "requests.jsonl").open("a", encoding="utf-8") as handle:
++                handle.write(json.dumps(entry, ensure_ascii=False) + "\n")
++            self.check_page(response.text)
++            if response.status_code in (301, 302, 303, 307, 308):
++                url = urljoin(url, response.headers["Location"])
++                if response.status_code in (301, 302, 303):
++                    method, data = "GET", None
++                continue
++            response.raise_for_status()
++            if "html" not in response.headers.get("Content-Type", "").lower():
++                raise RuntimeError("查询返回非 HTML 内容")
++            self.page_source = response.text
++            self.current_url = url
++            return
++        raise RuntimeError("查询重定向超过上限")
++
++    def get(self, url):
++        self.request("GET", url)
++        soup = BeautifulSoup(self.page_source, "lxml")
++        form = soup.find("form", id="BasicFrom")
++        if form is not None and not soup.select("td.VariantListA img, td.VariantListB img"):
++            action = urljoin(self.current_url, form["action"])
++            if form.get("method", "get").lower() != "post":
++                raise RuntimeError("查询表单方法变化，停止采集")
++            self.request("POST", action, form_fields(form))
++
++    def find_element(self, *args):
++        soup = BeautifulSoup(self.page_source, "lxml")
++        links = [link for link in soup.select("a.Bookmarker") if link.get_text(strip=True) == "下一頁"]
++        if not links:
++            raise NoSuchElementException("No next page")
++        targets = {link.get("id", "") for link in links}
++        if len(targets) != 1:
++            raise RuntimeError("分页结构异常：下一页目标不一致")
++        match = re.fullmatch(r"PageLink(\d+)", targets.pop())
++        form = soup.find("form", id="HiddenFrom")
++        if not match or form is None or form.get("method", "").lower() != "post":
++            raise RuntimeError("分页结构异常：缺少已验证的翻页表单")
++        fields = form_fields(form)
++        target = int(match[1])
++        current = fields.get("PageTo", "")
++        if not current.isdecimal() or target != int(current) + 1:
++            raise RuntimeError("分页结构异常：下一页不连续")
++        fields["PageTo"] = str(target)
++        action = urljoin(self.current_url, form["action"])
++        return SimpleNamespace(click=lambda: self.request("POST", action, fields))
++
++    def set_page_load_timeout(self, timeout):
++        pass
++
++    def quit(self):
++        self.session.close()
+diff --git a/read_font.py b/read_font.py
+index b6fbc7f..5d913d8 100644
+--- a/read_font.py
++++ b/read_font.py
+@@ -1,127 +1,294 @@
+-import time
+-from urllib.parse import urlparse, parse_qs, urlsplit
+ import argparse
++import hashlib
++import json
++from pathlib import Path
++import re
++import sys
++import time
++import unicodedata
++from urllib.parse import parse_qsl, urlencode, urljoin, urlsplit
++from urllib.robotparser import RobotFileParser
+ 
+-from selenium import webdriver 
+-from selenium.webdriver.common.by import By
++import requests
++from bs4 import BeautifulSoup
++from selenium import webdriver
++from selenium.common.exceptions import NoSuchElementException, WebDriverException
+ from selenium.webdriver.chrome.options import Options
+-from selenium.webdriver.common.keys import Keys 
++from selenium.webdriver.chrome.service import Service
++from selenium.webdriver.common.by import By
+ 
+-from crawler import *
++from crawler import dump_jsonl, load_jsonl
++from http_driver import HTTPDriver
+ 
+-# initiating the webdriver. Parameter includes the path of the webdriver. 
+-chrome_options = Options()
+-chrome_options.add_argument('--headless')
+-chrome_options.add_argument('--no-sandbox')
+-chrome_options.add_argument('--disable-dev-shm-usage')
+ 
++class AccessRestricted(RuntimeError):
++    pass
+ 
+-def get_xiaozhuan_list_url(driver, args, folder_path, ZiOrder):
+ 
+-    url = args.target_url%(ZiOrder)
++class PageLayoutError(RuntimeError):
++    pass
++
++
++def check_page(html):
++    soup = BeautifulSoup(html, "lxml")
++    title = soup.title.get_text(" ", strip=True) if soup.title else ""
++    text = soup.get_text(" ", strip=True)
++    if any(word in title + text for word in
++           ("Access Restricted", "Access Denied", "服務限制存取", "服务限制访问", "驗證碼", "验证码")):
++        raise AccessRestricted(f"访问受限：{title or '限制或验证页面'}")
++    return soup
++
++
++def image_url(src, args, page_url):
++    if not src:
++        raise PageLayoutError("页面结构异常：图片缺少 src")
++    parts = urlsplit(urljoin(page_url, src))
++    if (parts.scheme != "https" or parts.hostname != "xiaoxue.iis.sinica.edu.tw"
++            or parts.port not in (None, 443) or parts.username is not None):
++        raise PageLayoutError("页面结构异常：图片不属于已审核的 HTTPS 来源")
++    query = [(key, value) for key, value in parse_qsl(parts.query, keep_blank_values=True) if key != "size"]
++    query.append(("size", str(args.size)))
++    return parts._replace(query=urlencode(query)).geturl()
++
++
++def snapshot(html, directory):
++    data = html.encode("utf-8")
++    digest = hashlib.sha256(data).hexdigest()
++    directory = Path(directory)
++    directory.mkdir(parents=True, exist_ok=True)
++    (directory / f"{digest}.html").write_bytes(data)
++    return digest
++
++
++def get_xiaozhuan_list_url(driver, args, folder_path, ZiOrder):
++    url = args.target_url % ZiOrder
+     print(url)
+-    
+-    driver.get(url)  
+-    time.sleep(5)  
+-    
+-
+-    next_page = True
+-    img_count = 0
+-    imgList = []
+-
+-    while next_page:
+-
+-        html = driver.page_source 
+-        soup = BeautifulSoup(html, "html.parser")
+-    
+-        # TODO: 抓字型當作ground truth
+-        label_text = ""
++    driver.get(url)
++    time.sleep(args.interval)
++    img_list, seen, raw_hashes = [], set(), []
++    label_text, raw_head = "", ""
++    primary_head = None
++    expected_count = expected_pages = None
++    glyph_count = 0
++    seen_glyphs = set()
++    for page_number in range(args.max_pages):
++        html = driver.page_source
++        digest = snapshot(html, Path(folder_path) / "raw")
++        raw_hashes.append(digest)
++        soup = check_page(html)
++        if digest in seen:
++            raise PageLayoutError("页面结构异常：翻页后内容重复，停止以防循环")
++        seen.add(digest)
+         label = soup.find(id="ZiOrder")
+         if label:
+-            label_text = label.get("value", "")
+-
+-        char_variant_list = soup.find_all('img', class_ = 'charValue')
+-        for char_variant in char_variant_list:
+-            if char_variant.parent.get('class', None) is None:
+-                img_url = char_variant.get('src','')
+-                url_split = urlsplit(img_url)
+-                url_query_parse = url_split.query.split('&')
+-                url_query = [ param for param in url_query_parse if param.startswith('size=')==False]
+-                url_query.append("{}={}".format('size', args.size))
+-
+-                #save_from_url(args.root_url+url_split.path+"?"+"&".join(url_query), os.path.join(folder_path, "%s_%s.png"%(ZiOrder, img_count)))
+-                imgList.append({'img_id': img_count, 'desc': "字頭", "img_url":args.root_url+url_split.path+"?"+"&".join(url_query)})
+-
+-                img_count = img_count+1
+-
+-        char_list = soup.find_all('td', class_ = 'VariantListA')
+-        char_list = char_list + soup.find_all('td', class_ = 'VariantListB')
+-        for char in char_list:
+-            img = char.img
++            if label.get("value", "") != str(ZiOrder):
++                raise PageLayoutError("分页记录编号发生变化，停止合并")
++            raw_head = label.get("value", "")
++            if page_number == 0:
++                label_text = raw_head
++        page_field = soup.find(id="PageTo")
++        if page_field and page_field.get("value") != str(page_number + 1):
++            raise PageLayoutError("分页页码未正确前进")
++        summary = re.search(r"共搜尋到\s*(\d+)\s*字\s*／\s*(\d+)\s*頁", soup.get_text(" ", strip=True))
++        if summary:
++            counts = (int(summary[1]), int(summary[2]))
++            if expected_count is None:
++                expected_count, expected_pages = counts
++                if expected_pages > args.max_pages:
++                    raise PageLayoutError("总页数超过分页上限，未保存不完整记录")
++            elif counts != (expected_count, expected_pages):
++                raise PageLayoutError("翻页期间结果总数发生变化")
++        elif expected_count is not None:
++            raise PageLayoutError("分页缺少总数信息，无法验证完整性")
++        variants = soup.select("td.VariantListA, td.VariantListB")
++        if not variants:
++            raise PageLayoutError("页面结构未确认：没有字形单元格，不能记为无收录")
++        if page_number == 0:
++            for head in soup.select("img.charValue"):
++                if head.find_parent("td", class_=["VariantListA", "VariantListB"]) is None:
++                    match = re.fullmatch(r"&0\.([0-9A-Fa-f]+);", head.get("alt", ""))
++                    if match and primary_head is None:
++                        candidate = chr(int(match.group(1), 16))
++                        if unicodedata.name(candidate, "").startswith("CJK UNIFIED IDEOGRAPH"):
++                            primary_head = candidate
++                    img_list.append({"img_id": len(img_list), "desc": "字頭",
++                        "img_url": image_url(head.get("src"), args, driver.current_url)})
++            if primary_head is not None:
++                label_text = primary_head
++        page_image_count = 0
++        page_glyphs = set()
++        for cell in variants:
++            img = cell.find("img")
+             if img:
+-                img_url = img.get('src', None)
+-                url_split = urlsplit(img_url)
+-                url_query_parse = url_split.query.split('&')
+-                url_query = [ param for param in url_query_parse if param.startswith('size=')==False]
+-                url_query.append("{}={}".format('size', args.size))
++                img_url = image_url(img.get("src"), args, driver.current_url)
++                desc = cell.get_text(" ", strip=True)
++                key = (img_url, desc)
++                if key in seen_glyphs:
++                    raise PageLayoutError("跨页字形重复，无法确认分页完整性")
++                page_glyphs.add(key)
++                img_list.append({"img_id": len(img_list), "desc": desc, "img_url": img_url})
++                page_image_count += 1
++        seen_glyphs.update(page_glyphs)
++        if not page_image_count:
++            raise PageLayoutError("页面结构未确认：没有可解析字形图片")
++        glyph_count += page_image_count
++        try:
++            pager = driver.find_element(By.LINK_TEXT, "下一頁")
++        except NoSuchElementException:
++            if expected_count is not None and (glyph_count != expected_count or page_number + 1 != expected_pages):
++                raise PageLayoutError("分页完整性不符：实际字形数或页数与网站声明不一致")
++            return {"id": ZiOrder, "charname": label_text, "raw_head": raw_head, "imgList": img_list,
++                    "source_url": url, "raw_sha256": raw_hashes, "mapping_status": "unverified",
++                    "page_count": page_number + 1, "expected_glyph_count": expected_count}
++        if page_number + 1 == args.max_pages:
++            raise PageLayoutError("达到分页上限，未保存不完整的成功记录")
++        pager.click()
++        time.sleep(args.interval)
+ 
+-                #save_from_url(args.root_url+url_split.path+"?"+"&".join(url_query), os.path.join(folder_path, "%s_%s.png"%(ZiOrder, img_count)))
+-                imgList.append({'img_id': img_count, 'desc': char.text, "img_url": args.root_url+url_split.path+"?"+"&".join(url_query)})
+-                img_count = img_count+1
++def preflight(args, folder):
++    response = requests.get("https://xiaoxue.iis.sinica.edu.tw/robots.txt",
++                            headers={"User-Agent": args.user_agent}, timeout=20, allow_redirects=False)
++    digest = hashlib.sha256(response.content).hexdigest()
++    raw_path = folder / "raw" / f"robots-{digest}.response"
++    raw_path.parent.mkdir(parents=True, exist_ok=True)
++    raw_path.write_bytes(response.content)
++    evidence = {"url": response.url if hasattr(response, "url") else "https://xiaoxue.iis.sinica.edu.tw/robots.txt",
++                "status_code": response.status_code, "content_type": response.headers.get("Content-Type"),
++                "sha256": digest, "raw_path": str(raw_path), "network_requests": 1,
++                "robots_status": "not_found" if response.status_code in (404, 410) else "present"}
++    (folder / "preflight.json").write_text(json.dumps(evidence, ensure_ascii=False, indent=2) + "\n")
++    check_page(response.text)
++    if response.status_code in (404, 410):
++        return evidence
++    if response.status_code != 200:
++        raise AccessRestricted(f"访问条件未通过：robots HTTP {response.status_code}")
++    if "text/html" in response.headers.get("Content-Type", "").lower() or "<html" in response.text.lower():
++        raise AccessRestricted("访问条件未通过：robots 返回 HTML，不能确认访问规则")
++    args.robots = RobotFileParser()
++    args.robots.parse(response.text.splitlines())
++    if not args.robots.can_fetch(args.user_agent, args.target_url % args.start_idx):
++        raise AccessRestricted("访问条件未通过：robots 不允许目标页面")
++    delay = args.robots.crawl_delay(args.user_agent)
++    rate = args.robots.request_rate(args.user_agent)
++    if delay:
++        args.interval = max(args.interval, delay)
++    if rate:
++        args.interval = max(args.interval, rate.seconds / rate.requests)
++    return evidence
+ 
+-        pager= None
+-        try:
+-            pager = driver.find_element(By.LINK_TEXT, '下一頁')
+-            pager.click()
+-            time.sleep(5)  
+-        except:
+-            print('next page not found.')
+-            next_page = False
+ 
+-    # json格式: {id: #ZiOrder, imgList:[{img_id: #img_id, desc: #出處}]
+-    return {'id': ZiOrder, 'charname': label_text, 'imgList': imgList}
++class OfflineDriver:
++    def __init__(self, path, url):
++        self.page_source = path.read_text(encoding="utf-8")
++        self.current_url = url
+ 
++    def get(self, url):
++        self.current_url = url
+ 
++    def find_element(self, *args):
++        soup = BeautifulSoup(self.page_source, "lxml")
++        if soup.find("a", string=lambda value: value and value.strip() == "下一頁"):
++            raise PageLayoutError("离线文件存在下一页，不能将单页记为完整记录")
++        raise NoSuchElementException("离线文件没有下一页")
+ 
+-def _parse_args():
+-    parser = argparse.ArgumentParser(
+-        description="爬蟲--小學堂網頁"
+-    )
+-
+-    parser.add_argument('-f','--font', type=str, required=False, help='font', default='jiaguwen')
+-    parser.add_argument('-l','--limit', type=int, required=False, help='limit', default=3956)
+-    parser.add_argument('-s','--size', type=int, required=False, help='size', default=64)
+-    parser.add_argument('-p','--save_path', type=str, required=False, help='save_path', default='./')
+-    parser.add_argument('-r','--root_url', type=str, required=False, help='root_url', default='https://xiaoxue.iis.sinica.edu.tw')
+-    parser.add_argument('-u','--target_url', type=str, required=False, help='target_url', default='https://xiaoxue.iis.sinica.edu.tw/jiaguwen?ZiOrder=%d')
+-    parser.add_argument('--start_idx', type=int, required=False, help='target_url', default=1)
+ 
++def _parse_args():
++    parser = argparse.ArgumentParser(description="小学堂原爬虫调试版：默认不联网")
++    parser.add_argument("-f", "--font", choices=["jiaguwen", "jinwen", "xiaozhuan"], default="jiaguwen")
++    parser.add_argument("-l", "--limit", type=int, default=1, help="结束编号（包含）")
++    parser.add_argument("-s", "--size", type=int, default=64)
++    parser.add_argument("-p", "--save_path", type=Path, default=Path("./font_crawler"))
++    parser.add_argument("-r", "--root_url", default="https://xiaoxue.iis.sinica.edu.tw")
++    parser.add_argument("-u", "--target_url")
++    parser.add_argument("--start_idx", type=int, default=1)
++    parser.add_argument("--interval", type=float, default=7)
++    parser.add_argument("--max-pages", type=int, default=10)
++    parser.add_argument("--transport", choices=["http", "selenium"], default="http")
++    parser.add_argument("--chromedriver", type=Path)
++    parser.add_argument("--user-agent", default="HanziResearchDebug/0.1 (+https://github.com/EvaWang/xiaoxue_crawler)")
++    mode = parser.add_mutually_exclusive_group()
++    mode.add_argument("--probe", action="store_true", help="仅检查 robots，不访问详情")
++    mode.add_argument("--execute", action="store_true", help="访问条件通过后采集少量记录")
++    mode.add_argument("--html-file", type=Path, help="仅离线调试已保存的单页 HTML")
+     args = parser.parse_args()
++    if args.target_url is None:
++        parameter = "kaiOrder" if args.font == "xiaozhuan" else "ZiOrder"
++        args.target_url = f"https://xiaoxue.iis.sinica.edu.tw/{args.font}/?{parameter}=%d"
++    if args.start_idx < 1 or not 0 <= args.limit - args.start_idx < 100:
++        parser.error("编号范围必须在1至100条内，limit 是结束编号")
++    if args.interval < 5 or not 1 <= args.max_pages <= 20 or not 1 <= args.size <= 4096:
++        parser.error("间隔至少5秒，分页上限1至20，图片尺寸1至4096")
++    try:
++        for index in (args.start_idx, args.limit):
++            parts = urlsplit(args.target_url % index)
++            if (parts.scheme != "https" or parts.hostname != "xiaoxue.iis.sinica.edu.tw"
++                    or parts.port not in (None, 443) or parts.username is not None):
++                parser.error("仅支持已审核的官方 HTTPS 域名")
++    except (TypeError, ValueError):
++        parser.error("target_url 必须包含单个 %d 编号占位符")
+     return args
+ 
+-if __name__ == '__main__':
+ 
++def main():
+     args = _parse_args()
+-    print("Start crawlering...")
+-    print("Assume there are {} records.".format(args.limit))
+-
+-    folder_path = os.path.join(args.save_path, args.font)
+-    create_folder(folder_path)
+-    
+-    retry = 3
+-    driver = webdriver.Chrome(os.path.join(args.save_path, 'chromedriver'), chrome_options=chrome_options)  
+-    for i in range(args.start_idx, args.limit+1):
+-        while retry>0:
+-            try:
+-                data = get_xiaozhuan_list_url(driver, args, folder_path, i)
+-                dump_jsonl(data, os.path.join(folder_path, 'jiaguwen.jsonl'))
+-                retry = 3
+-                break
+-            except:
+-                print(f"retry {retry} times")
+-                time.sleep(5)
+-                retry = retry-1
+-        
+-
+-    driver.close() # closing the webdriver 
+-    print("Crawler done.")
++    if not (args.probe or args.execute or args.html_file):
++        print(json.dumps({"status": "dry_run", "network_requests": 0,
++              "start_idx": args.start_idx, "end_idx": args.limit}, ensure_ascii=False))
++        return 0
++    folder = args.save_path / args.font
++    folder.mkdir(parents=True, exist_ok=True)
++    driver, added = None, 0
++    try:
++        if args.html_file:
++            args.interval = 0
++            driver = OfflineDriver(args.html_file, args.target_url % args.start_idx)
++            data = get_xiaozhuan_list_url(driver, args, folder, args.start_idx)
++            dump_jsonl(data, str(folder / "offline.jsonl"))
++            return 0
++        evidence = preflight(args, folder)
++        if args.probe:
++            print(json.dumps({"status": "robots_checked", **evidence}, ensure_ascii=False))
++            return 0
++        if args.transport == "http":
++            driver = HTTPDriver(args, folder, check_page)
++        else:
++            options = Options()
++            options.add_argument("--headless")
++            options.add_argument(f"--user-agent={args.user_agent}")
++            if args.chromedriver:
++                driver = webdriver.Chrome(service=Service(str(args.chromedriver)), options=options)
++            else:
++                driver = webdriver.Chrome(options=options)
++            driver.set_page_load_timeout(30)
++        output = folder / f"{args.font}.jsonl"
++        completed = {str(item["id"]) for item in load_jsonl(str(output))} if output.exists() else set()
++        for index in range(args.start_idx, args.limit + 1):
++            if str(index) in completed:
++                continue
++            for attempt in range(3):
++                try:
++                    data = get_xiaozhuan_list_url(driver, args, folder, index)
++                    dump_jsonl(data, str(output))
++                    added += 1
++                    break
++                except (AccessRestricted, PageLayoutError):
++                    raise
++                except WebDriverException:
++                    if attempt == 2:
++                        raise
++                    time.sleep(args.interval * (attempt + 1))
++        print(json.dumps({"status": "completed", "success_records_added": added}))
++        return 0
++    except (RuntimeError, requests.RequestException, WebDriverException, OSError, ValueError) as error:
++        result = {"status": "blocked" if isinstance(error, AccessRestricted) else "failed",
++                  "error_type": type(error).__name__, "error": str(error), "success_records_added": added}
++        dump_jsonl(result, str(folder / "errors.jsonl"))
++        print(json.dumps(result, ensure_ascii=False), file=sys.stderr)
++        return 2
++    finally:
++        if driver is not None and not args.html_file:
++            driver.quit()
++
++
++if __name__ == "__main__":
++    sys.exit(main())
+diff --git a/requirements.txt b/requirements.txt
+index b74b115..30779f6 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,3 +1,5 @@
+-requests
+-beautifulsoup4
+-selenium
+\ No newline at end of file
++requests>=2.32,<3
++beautifulsoup4>=4.12,<5
++selenium>=4.20,<5
++lxml>=5,<7
++Pillow>=11,<13

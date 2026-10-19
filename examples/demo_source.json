@@ -1,0 +1,9 @@
+{
+  "id": "synthetic_demo",
+  "name": "合成测试数据，不是历史字形资料",
+  "url": "https://example.invalid/synthetic-demo",
+  "license_id": "CC0-1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "audit_status": "import_only",
+  "is_test": true
+}

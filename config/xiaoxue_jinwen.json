@@ -1,0 +1,9 @@
+{
+  "id": "sinica_xiaoxue_jinwen",
+  "name": "小学堂金文（MVP抽样）",
+  "url": "https://xiaoxue.iis.sinica.edu.tw/jinwen/",
+  "license_id": "CC0-1.0",
+  "license_url": "https://xiaoxue.iis.sinica.edu.tw/License/License",
+  "audit_status": "import_only",
+  "is_test": false
+}
