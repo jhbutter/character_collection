@@ -282,3 +282,34 @@ def test_cli_collect_expand50_dry_run():
     assert result.exit_code == 0
     assert '"status": "dry_run"' in result.stdout
     assert '"range": [\n    11,\n    50\n  ]' in result.stdout
+
+def test_directory_export_style_first_layout(setup):
+    from hanzi_evolution.store import write_directory_export
+    engine, root, _, record = setup
+    oracle = record.model_copy(update={"local_id": "a", "glyphs": [
+        record.glyphs[0].model_copy(update={"script_style": "jiaguwen"})]})
+    bronze = record.model_copy(update={"local_id": "b", "glyphs": [
+        record.glyphs[0].model_copy(update={"script_style": "jinwen"})]})
+    other = record.model_copy(update={"local_id": "c", "glyphs": [
+        record.glyphs[0].model_copy(update={"character": "一", "script_style": "jinwen"})]})
+    save(setup, [oracle, bronze, other])
+    rows = export_rows(engine, True, True)
+    output = root / "dataset_style"
+    result = write_directory_export(rows, root, output, True, True, layout="style")
+    assert result["layout"] == "style-character-v1"
+    assert result["character_count"] == 2 and result["image_file_count"] == 3
+    assert (output / "甲骨文/馬/metadata.jsonl").is_file()
+    assert (output / "金文/馬/metadata.jsonl").is_file()
+    assert (output / "金文/一/metadata.jsonl").is_file()
+    assert not (output / "馬").exists()
+    row = json.loads((output / "甲骨文/馬/metadata.jsonl").read_text().splitlines()[0])
+    assert row["stage_directory"] == "甲骨文"
+    assert row["image_path"].startswith("甲骨文__")
+    assert (output / "甲骨文/馬" / row["image_path"]).is_file()
+    manifest = json.loads((output / "manifest.json").read_text())
+    assert manifest["layout"] == "style-character-v1"
+    assert manifest["grouping"] == "style-first"
+    assert manifest["style_count"] == 2
+    assert write_directory_export(rows, root, output, True, True, layout="style")["reused"] is True
+    with pytest.raises(ValueError, match="布局"):
+        write_directory_export(rows, root, root / "bad_layout", True, True, layout="bad")

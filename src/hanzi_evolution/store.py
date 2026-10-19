@@ -179,12 +179,15 @@ def write_export(rows, output: Path, fmt: str):
             writer.writerows(rows)
 
 
-def write_directory_export(rows, root: Path, output: Path, include_quarantine=False, include_test=False):
+def write_directory_export(rows, root: Path, output: Path, include_quarantine=False, include_test=False,
+                           layout="character"):
     import re
     import shutil
     import tempfile
     import unicodedata
 
+    if layout not in {"character", "style"}:
+        raise ValueError("导出布局只能为 character 或 style")
     root, output = root.resolve(), output.absolute()
     resolved_output = output.resolve()
     if resolved_output == root or root.is_relative_to(resolved_output) or output.is_symlink():
@@ -228,33 +231,55 @@ def write_directory_export(rows, root: Path, output: Path, include_quarantine=Fa
         stage_counts[key] = stage_counts.get(key, 0) + 1
         identity = json.dumps([row["source_id"], row["source_record_id"], row["local_key"], row["sha256"]], ensure_ascii=False)
         token = hashlib.sha256(identity.encode()).hexdigest()[:24]
-        relative = Path(stage) / f"{stage[:20]}__{token}{suffix}"
+        filename = f"{stage[:20]}__{token}{suffix}"
+        if layout == "character":
+            relative = Path(stage) / filename
+            group_key = label
+            destination = (Path(label) / relative).as_posix()
+            image_path = relative.as_posix()
+        else:
+            relative = Path(label) / filename
+            group_key = (stage, label)
+            destination = (Path(stage) / relative).as_posix()
+            image_path = filename
         exported = {**row, "archive_image_path": row["image_path"],
-                    "image_path": relative.as_posix(), "stage_directory": stage}
-        groups.setdefault(label, []).append(exported)
-        destination = (Path(label) / relative).as_posix()
+                    "image_path": image_path, "stage_directory": stage}
+        groups.setdefault(group_key, []).append(exported)
         if destination in assets and assets[destination][1] != row["sha256"]:
             raise ValueError("导出文件名冲突")
         assets[destination] = (root / row["image_path"], row["sha256"])
 
     files = {path: digest for path, (_, digest) in assets.items()}
     metadata_files = {}
-    for label, records in sorted(groups.items()):
+    for key, records in sorted(groups.items()):
         records.sort(key=lambda row: (row["image_path"], row["glyph_id"]))
         payload = "".join(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n" for row in records).encode()
-        path = f"{label}/metadata.jsonl"
+        if layout == "character":
+            path = f"{key}/metadata.jsonl"
+        else:
+            stage, label = key
+            path = f"{stage}/{label}/metadata.jsonl"
         metadata_files[path] = payload
         files[path] = hashlib.sha256(payload).hexdigest()
-    manifest = {"layout": "character-stage-v1", "includes_quarantine": include_quarantine,
-                "includes_test": include_test, "character_count": len(groups),
-                "glyph_count": len({row["glyph_id"] for records in groups.values() for row in records}),
+    all_records = [row for records in groups.values() for row in records]
+    character_count = len({row["character"] for row in all_records})
+    style_count = len({row["stage_directory"] for row in all_records})
+    stage_policy = "按script_style分为甲骨文、金文、小篆等字形阶段；缺少分类用待分类，具体断代保留在元数据"
+    manifest = {"layout": "character-stage-v1" if layout == "character" else "style-character-v1",
+                "includes_quarantine": include_quarantine,
+                "includes_test": include_test, "character_count": character_count,
+                "glyph_count": len({row["glyph_id"] for row in all_records}),
                 "image_file_count": len(assets), "skipped_unmapped_rows": skipped_unmapped,
                 "skipped_missing_image_rows": skipped_missing_image,
                 "max_images_per_character_style": 5,
                 "selection_order": "glyph_id ascending",
                 "skipped_style_limit_rows": skipped_style_limit,
-                "stage_policy": "按script_style分为甲骨文、金文、小篆等字形阶段；缺少分类用待分类，具体断代保留在元数据",
+                "stage_policy": stage_policy,
                 "files": dict(sorted(files.items()))}
+    if layout == "style":
+        manifest.update({"grouping": "style-first", "style_count": style_count,
+                         "group_count": len(groups),
+                         "stage_policy": stage_policy + "；目录按字体优先，字体/汉字/图片"})
     manifest_bytes = (json.dumps(manifest, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode()
     if output.exists():
         if not output.is_dir():
@@ -267,7 +292,7 @@ def write_directory_export(rows, root: Path, output: Path, include_quarantine=Fa
         ):
             raise ValueError("目标目录已存在且内容不同，请使用新的导出目录，避免混入旧数据或覆盖文件")
         return {**{key: manifest[key] for key in ("character_count", "glyph_count", "image_file_count")},
-                "output": str(output), "reused": True}
+                "layout": manifest["layout"], "output": str(output), "reused": True}
     output.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=".hanzi-export-", dir=output.parent) as temporary:
         stage = Path(temporary) / "dataset"
@@ -283,4 +308,4 @@ def write_directory_export(rows, root: Path, output: Path, include_quarantine=Fa
         (stage / "manifest.json").write_bytes(manifest_bytes)
         stage.rename(output)
     return {**{key: manifest[key] for key in ("character_count", "glyph_count", "image_file_count")},
-            "output": str(output), "reused": False}
+            "layout": manifest["layout"], "output": str(output), "reused": False}

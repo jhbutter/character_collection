@@ -41,7 +41,7 @@ scripts/expand_50.py
 5. **抽样**：甲骨文每字最多 5 张；跨来源按“汉字 + 字体阶段”合计最多 5 张。
 6. **下载与校验**：逐张下载，校验 MIME、格式、尺寸、SHA-256；原图按哈希归档到 `data/images/original/`。
 7. **入库**：整批事务；`source_record` 幂等；`image_asset` 哈希去重；`glyph_image` 保留各来源关联。
-8. **导出**：`write_directory_export` 构建临时目录，校验哈希后发布；相同内容复用，不同内容必须换新目录。
+8. **导出**：`write_directory_export` 构建临时目录，校验哈希后发布；支持 `character-stage-v1`（汉字优先）和 `style-character-v1`（字体优先）；相同内容复用，不同内容必须换新目录。
 
 ## 关键目录
 
@@ -70,4 +70,4 @@ data/                    运行时数据，根仓库忽略
 .venv/bin/pytest -q
 ```
 
-当前 81 项离线测试通过，覆盖导入幂等、冲突回滚、图片校验、目录导出、限额、零结果、PUA/多字头选择、预算、CLI dry-run 和封禁路径。
+当前 82 项离线测试通过，覆盖导入幂等、冲突回滚、图片校验、两种目录布局、限额、零结果、PUA/多字头选择、预算、CLI dry-run 和封禁路径。

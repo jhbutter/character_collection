@@ -49,7 +49,9 @@ character,list_version,source_url,license_id
 
 ## 按字头/字形阶段的目录导出
 
-CLI：`hanzi export --format tree --output data/dataset --include-quarantine`。最终路径为 `<输出目录>/<汉字>/<字形阶段或待分类>/<书体>__<稳定标识>.<原图格式>`，并在汉字目录保存 metadata.jsonl。
+CLI：`hanzi export --format tree --output data/dataset_50 --include-quarantine`。默认 `character` 布局路径为 `<输出目录>/<汉字>/<字形阶段或待分类>/<书体>__<稳定标识>.<原图格式>`，并在汉字目录保存 metadata.jsonl。
+
+`--layout style` 输出字体优先布局：路径为 `<输出目录>/<字形阶段或待分类>/<汉字>/<书体>__<稳定标识>.<原图格式>`，metadata.jsonl 位于 `<字体>/<汉字>/`；manifest 的 layout 为 `style-character-v1`。
 
 - 阶段目录按 script_style 映射：jiaguwen→甲骨文、jinwen→金文、xiaozhuan→小篆、lishu→隶书、kaishu→楷书。其他有名称的书体保留名称，缺少分类用“待分类”。period与具体年代仍原样保留在元数据，不作为目录分类依据。
 - 保留同字同一字形阶段的全部实例；图片稳定标识来自source_id、source_record_id、local_key和图片哈希，避免跨来源编号冲突。
@@ -58,7 +60,7 @@ CLI：`hanzi export --format tree --output data/dataset --include-quarantine`。
 - 输出为内部待审集时必须显式 include-quarantine；该标志写入manifest，不能当作已审核发布集。
 - 未确定字头或没有图片的行仅记跳过数量；不强行归并字头，不创建没有实际图片的阶段目录。
 
-当前布局版本为 character-stage-v1；逐图新增 stage_directory 字段，不再生成 period_directory。历史 character-period-v1 快照不混入新目录。
+当前布局版本为 character-stage-v1（汉字优先）和 style-character-v1（字体优先）；逐图保留 stage_directory 字段，不再生成 period_directory。历史 character-period-v1 快照不混入新目录。
 
 ## 跨来源表单适配器与抽样
 

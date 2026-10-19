@@ -19,8 +19,8 @@
 - 真实样本仍 mapping_status=unverified、review_status=pending；不凭空填断代、出处或逐图许可。
 - 不自动归并繁简异体，不将站内编号当 Unicode；来源字库渲染图不等同于拓片或原物照片。
 - 推送前更新 README.md 和 AGENTS.md；大文件、原图、数据库和 .venv 不入库。
-- 用户已明确最终交付结构为“每个汉字一个文件夹，内部按甲骨文、金文、小篆、隶书、楷书等字形阶段存放图片”；使用 `hanzi export --format tree`，最终样本输出到 data/dataset_50，data/dataset 保留 10 字历史快照。
-- 目录按 script_style 分字形阶段，缺少分类用“待分类”；具体断代 period 及年代依据仅保存在metadata.jsonl。每字保留出处/许可/审核元数据，根manifest布局为character-stage-v1。旧目录备份data/dataset_period_v1已于2026-10-18清理。
+- 用户已明确两种交付结构：汉字优先 `汉字/字体/图片`（data/dataset_50）和字体优先 `字体/汉字/图片`（data/dataset_50_by_style）；使用 `hanzi export --format tree [--layout style]`，data/dataset 保留 10 字历史快照。
+- 目录按 script_style 分字形阶段，缺少分类用“待分类”；具体断代 period 及年代依据仅保存在metadata.jsonl。每字保留出处/许可/审核元数据，根manifest布局为character-stage-v1 或 style-character-v1。旧目录备份data/dataset_period_v1已于2026-10-18清理。
 - 目录导出为快照；相同内容可复用，内容不同使用新版本目录，不覆盖用户文件或混入旧图片。
 - 用户已授权尝试批量下载；首批甲骨文编号1–10已完成，每批最多100张新图片、默认7秒间隔。入口 scripts/batch_collect.py，状态逐条落盘；来源限制立即停止，记录级解析失败继续后续编号。
 - 批次入库必须逐来源记录归档JSONL，避免将已入库编号放进不同整文件哈希而触发冲突；未完整下载/未完成分页的记录不记成功。
@@ -35,9 +35,9 @@
 - 新来源断代仅抄录单元格明确标签，date_basis记录原文，不推断年代边界。跨库重复图保留各出处，内部image_asset按哈希去重；导出文件数和不同原图数分别报告。
 
 - 最终tree目录统一按“汉字 + 字体目录”跨来源/具体年代最多5张，按glyph_id升序选择，不足不补；适用于CLI、甲骨批次及跨库MVP的目录导出。原始档案、数据库及CSV/JSONL完整导出保留全部记录。
-- 扩字已完成：数据库50字头、1023条关联、1015张不同原图；data/dataset_50为50字、919图；data/dataset保留10字、232图历史快照；data/dataset_50_smoke11保留11字、244图烟测快照。11–64中PUA-only或无法确认Unicode的编号跳过，61–64用于补足。所有记录仍待审阅，publishable_glyph_count=0。81项离线测试通过，包括零结果、PUA/多字头选择、限额、复跑、CLI dry-run 与封禁路径。
+- 扩字已完成：数据库50字头、1023条关联、1015张不同原图；data/dataset_50为50字、919图（汉字优先）；data/dataset_50_by_style为50字、919图、10个字体目录（字体优先）；data/dataset保留10字、232图历史快照；data/dataset_50_smoke11保留11字、244图烟测快照。11–64中PUA-only或无法确认Unicode的编号跳过，61–64用于补足。所有记录仍待审阅，publishable_glyph_count=0。82项离线测试通过，包括零结果、PUA/多字头选择、限额、复跑、CLI dry-run、字体布局与封禁路径。
 
-- 2026-10-18 用户要求清理冗余，已删除9个历史dataset快照（968个重复图片文件）。当前保留 data/dataset（10字/232图历史）、data/dataset_50（50字/919图最终）和 data/dataset_50_smoke11（11字/244图烟测）；上文的旧快照/备份路径为历史记录。数据库、data/images、data/raw、data/batches保留用于追溯及复跑。
+- 2026-10-18 用户要求清理冗余，已删除9个历史dataset快照（968个重复图片文件）。当前保留 data/dataset（10字/232图历史）、data/dataset_50（50字/919图汉字优先）、data/dataset_50_by_style（50字/919图字体优先）和 data/dataset_50_smoke11（11字/244图烟测）；上文的旧快照/备份路径为历史记录。数据库、data/images、data/raw、data/batches保留用于追溯及复跑。
 
 - 十字补采已完成：一上旁下示彔元天吏帝，金文/小篆/隶变/字形演变40组查询全部complete。当时data/dataset为232图（每字每字体≤5），数据库336条关联、328张不同原图。新增154条关联/154张新原图，现代楷书参考共10张仍独立于历史楷书。
 - scripts/complete_ten.py默认不联网，--execute补采已核验10字，默认输出data/dataset；每批最多100张新图，7秒间隔。记录在data/batches/complete_ten；以原编号:fill5-v1作为补充导入local_id，原编号另存raw_head及包source_record_id，不覆盖既有证据。来源不足5张如实记录。

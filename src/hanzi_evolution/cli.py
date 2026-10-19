@@ -96,16 +96,22 @@ def lookup(character: Annotated[str, typer.Option()], db: DB = Path("data/hanzi.
 @app.command()
 def export(output: Annotated[Path, typer.Option()], db: DB = Path("data/hanzi.sqlite"),
            format: Annotated[str, typer.Option()] = "jsonl", root: ROOT = Path("data"),
+           layout: Annotated[str, typer.Option(help="tree 布局：character 或 style")] = "character",
            include_quarantine: Annotated[bool, typer.Option()] = False,
            include_test: Annotated[bool, typer.Option()] = False):
     if format not in {"csv", "jsonl", "tree"}:
         raise typer.BadParameter("format 只能为 csv、jsonl 或 tree")
+    if layout not in {"character", "style"}:
+        raise typer.BadParameter("layout 只能为 character 或 style")
+    if format != "tree" and layout != "character":
+        raise typer.BadParameter("layout 只用于 tree 导出")
     if output.resolve() == db.resolve():
         raise typer.BadParameter("输出路径不能覆盖数据库")
     rows = export_rows(open_db(db), include_quarantine, include_test)
     if format == "tree":
         try:
-            emit(write_directory_export(rows, root, output, include_quarantine, include_test))
+            emit(write_directory_export(rows, root, output, include_quarantine, include_test,
+                                        layout=layout))
         except (ValueError, OSError) as error:
             raise typer.BadParameter(str(error)) from error
     else:
