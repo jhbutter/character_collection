@@ -104,6 +104,18 @@ hanzi lookup --character 馬 --include-test --db data/demo/hanzi.sqlite
 
 演示库和正式库分开；合成方块图不是汉字史料。使用自定义 --db 时，图片校验/报告等命令同步指定 --root。
 
+## 字体转换实验数据（楷书 → 早期书体）
+
+已生成“现代楷书参考 → 甲骨文/金文/小篆/隶书”的成对清单，用于字体风格转换 PoC：
+
+```bash
+python scripts/build_style_pairs.py
+```
+
+当前为 **50 个楷书参考、735 对唯一目标图**，按汉字划分为 train 35 / val 7 / test 8；其中 37 个字四种书体都有。清单在 `data/ml/style_pairs/manifest.jsonl`，图片路径相对 `data/`，不进入 Git。
+
+这是**书体风格转换**，不是历史年代推演；输入和目标都是字库渲染图，不是拓片或原物照片。模型路线、预处理和评估见 [字体转换实验说明](docs/ml_style_translation.md)。当前 `.venv` 尚未安装 PyTorch/diffusers，训练未开始。
+
 ## 后续工作
 
 尚未完成100字试点、跨库字头映射、人工审阅界面、完整缺失状态表、Web 预览和正式数据包。历史试运行报告保留原时间状态，以本轮报告和 current_quality.json 为准。原图、数据库和 .venv 不入 Git；不主动 commit 或 push。

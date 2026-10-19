@@ -11,6 +11,7 @@
 | `cross_source_mvp.py` | `collection/cross_source.py` | 早期“一、天”跨来源 MVP 抽样 | `data/dataset_cross_source_mvp`（历史） |
 | `complete_ten.py` | `collection/complete_ten.py` | 早期 10 字四来源补采 | `data/dataset`（历史） |
 | `create_demo_image.py` | 同文件 | 生成合成演示图片，不联网 | `data/demo_input` |
+| `build_style_pairs.py` | `hanzi_evolution.ml.pairs` | 构建楷书参考到早期书体的成对清单，不联网、不训练 | `data/ml/style_pairs` |
 
 ## 当前推荐流程
 

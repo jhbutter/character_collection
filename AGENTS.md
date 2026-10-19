@@ -35,7 +35,8 @@
 - 新来源断代仅抄录单元格明确标签，date_basis记录原文，不推断年代边界。跨库重复图保留各出处，内部image_asset按哈希去重；导出文件数和不同原图数分别报告。
 
 - 最终tree目录统一按“汉字 + 字体目录”跨来源/具体年代最多5张，按glyph_id升序选择，不足不补；适用于CLI、甲骨批次及跨库MVP的目录导出。原始档案、数据库及CSV/JSONL完整导出保留全部记录。
-- 扩字已完成：数据库50字头、1023条关联、1015张不同原图；data/dataset_50为50字、919图（汉字优先）；data/dataset_50_by_style为50字、919图、10个字体目录（字体优先）；data/dataset保留10字、232图历史快照；data/dataset_50_smoke11保留11字、244图烟测快照。11–64中PUA-only或无法确认Unicode的编号跳过，61–64用于补足。所有记录仍待审阅，publishable_glyph_count=0。82项离线测试通过，包括零结果、PUA/多字头选择、限额、复跑、CLI dry-run、字体布局与封禁路径。
+- 字体转换PoC数据：scripts/build_style_pairs.py 从50张楷书参考生成735对早期书体目标（甲骨文313/金文186/隶书182/小篆54），按汉字train35/val7/test8，37字四体齐全；清单data/ml/style_pairs，不联网不训练。该任务是书体风格转换，不是历史年代推演。
+- 扩字已完成：数据库50字头、1023条关联、1015张不同原图；data/dataset_50为50字、919图（汉字优先）；data/dataset_50_by_style为50字、919图、10个字体目录（字体优先）；data/dataset保留10字、232图历史快照；data/dataset_50_smoke11保留11字、244图烟测快照。11–64中PUA-only或无法确认Unicode的编号跳过，61–64用于补足。所有记录仍待审阅，publishable_glyph_count=0。86项离线测试通过，包括零结果、PUA/多字头选择、限额、复跑、CLI dry-run、字体布局、配对 split 与封禁路径。
 
 - 2026-10-18 用户要求清理冗余，已删除9个历史dataset快照（968个重复图片文件）。当前保留 data/dataset（10字/232图历史）、data/dataset_50（50字/919图汉字优先）、data/dataset_50_by_style（50字/919图字体优先）和 data/dataset_50_smoke11（11字/244图烟测）；上文的旧快照/备份路径为历史记录。数据库、data/images、data/raw、data/batches保留用于追溯及复跑。
 
