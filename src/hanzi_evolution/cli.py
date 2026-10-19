@@ -143,8 +143,8 @@ def collect_expand50(
     interval: Annotated[float, typer.Option()] = 7,
     folder: Annotated[Path, typer.Option()] = Path("data/batches/expand_50"),
     output: Annotated[Path, typer.Option()] = Path("data/dataset_50"),
-    no_modern_reference: Annotated[bool, typer.Option()] = False,
-    no_export: Annotated[bool, typer.Option()] = False,
+    modern_reference: Annotated[bool, typer.Option("--modern-reference/--no-modern-reference")] = True,
+    export: Annotated[bool, typer.Option("--export/--no-export")] = True,
 ):
     """扩展当前 10 字到 50 个有图字头；默认只做 dry-run。"""
     if start_id < 1 or not 0 <= end_id - start_id < 100:
@@ -160,8 +160,8 @@ def collect_expand50(
     from .collection.expand import run
     args = SimpleNamespace(folder=folder, start_id=start_id, end_id=end_id,
                            target=target, max_images=max_images, interval=interval,
-                           output=output, no_modern_reference=no_modern_reference,
-                           no_export=no_export)
+                           output=output, no_modern_reference=not modern_reference,
+                           no_export=not export)
     raise typer.Exit(run(args))
 
 
