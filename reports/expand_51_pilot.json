@@ -1,0 +1,206 @@
+{
+  "started_at": "2026-10-19T13:03:11.443935+00:00",
+  "status": "finished",
+  "phase": "cross",
+  "target": 51,
+  "range": [
+    65,
+    72
+  ],
+  "oracle_limit": 5,
+  "downloaded_this_run": 18,
+  "oracle_records": [
+    {
+      "id": 65,
+      "status": "failed",
+      "error_type": "ValueError",
+      "error": "甲骨文记录没有可确认的单字标准字头"
+    },
+    {
+      "id": 66,
+      "character": "介",
+      "status": "imported",
+      "pending_downloads": 5,
+      "selected": 5,
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 5
+    }
+  ],
+  "cross_records": [
+    {
+      "character": "介",
+      "source": "jinwen",
+      "status": "complete",
+      "available": 1,
+      "selected": 1,
+      "styles": {
+        "jinwen": 1
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 1
+    },
+    {
+      "character": "介",
+      "source": "xiaozhuan",
+      "status": "complete",
+      "available": 1,
+      "selected": 1,
+      "styles": {
+        "xiaozhuan": 1
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 1
+    },
+    {
+      "character": "介",
+      "source": "lishu",
+      "status": "complete",
+      "available": 10,
+      "selected": 7,
+      "styles": {
+        "qinwenzi": 2,
+        "lishu": 5
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 7
+    },
+    {
+      "character": "介",
+      "source": "yanbian",
+      "status": "complete",
+      "available": 10,
+      "selected": 3,
+      "styles": {
+        "chuwenzi": 1,
+        "zhanguowenzi": 2
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 3
+    }
+  ],
+  "characters": [
+    {
+      "character": "介",
+      "collections": {
+        "jinwen": {
+          "source": "jinwen",
+          "status": "complete",
+          "available": 1,
+          "selected": 1,
+          "styles": {
+            "jinwen": 1
+          },
+          "records_imported": 1,
+          "records_skipped": 0,
+          "glyphs_imported": 1
+        },
+        "xiaozhuan": {
+          "source": "xiaozhuan",
+          "status": "complete",
+          "available": 1,
+          "selected": 1,
+          "styles": {
+            "xiaozhuan": 1
+          },
+          "records_imported": 1,
+          "records_skipped": 0,
+          "glyphs_imported": 1
+        },
+        "lishu": {
+          "source": "lishu",
+          "status": "complete",
+          "available": 10,
+          "selected": 7,
+          "styles": {
+            "qinwenzi": 2,
+            "lishu": 5
+          },
+          "records_imported": 1,
+          "records_skipped": 0,
+          "glyphs_imported": 7
+        },
+        "yanbian": {
+          "source": "yanbian",
+          "status": "complete",
+          "available": 10,
+          "selected": 3,
+          "styles": {
+            "chuwenzi": 1,
+            "zhanguowenzi": 2
+          },
+          "records_imported": 1,
+          "records_skipped": 0,
+          "glyphs_imported": 3
+        }
+      }
+    }
+  ],
+  "finished_at": "2026-10-19T13:06:08.693622+00:00",
+  "character_count": 51,
+  "network_records": 27,
+  "not_attempted_ids": [
+    67,
+    68,
+    69,
+    70,
+    71,
+    72
+  ],
+  "quality": {
+    "character_count_including_test": 51,
+    "real_glyph_count": 1041,
+    "real_with_image_character_count": 51,
+    "real_image_count": 1033,
+    "test_glyph_count": 0,
+    "publishable_glyph_count": 0,
+    "unique_image_count_including_test": 1033,
+    "image_validity_rate": 1.0,
+    "source_traceability_rate": 1.0,
+    "coverage": {
+      "unknown / jiaguwen": 311,
+      "商代晚期 / jinwen": 49,
+      "unknown / xiaozhuan": 57,
+      "unknown / shuowen_guwen": 12,
+      "秦 / qinwenzi": 75,
+      "西漢 / lishu": 123,
+      "秦 / lishu": 14,
+      "商 / jiaguwen": 10,
+      "西周早期 / jinwen": 58,
+      "戰國.齊 / zhanguowenzi": 16,
+      "戰國.楚 / chuwenzi": 74,
+      "unknown / kaishu_reference": 51,
+      "戰國.秦 / zhanguowenzi": 15,
+      "unknown / lishu": 12,
+      "unknown / jinwen": 13,
+      "西周中期 / jinwen": 30,
+      "西周晚期 / jinwen": 17,
+      "東漢 / lishu": 37,
+      "戰國.晉 / zhanguowenzi": 20,
+      "戰國.燕 / zhanguowenzi": 7,
+      "unknown / shuowen_zhouwen": 5,
+      "戰國.楚 / zhanguowenzi": 2,
+      "春秋晚期 / jinwen": 16,
+      "unknown / zhanguowenzi": 7,
+      "西周 / jinwen": 2,
+      "孫吳 / lishu": 1,
+      "新莽 / lishu": 2,
+      "戰國 / zhanguowenzi": 3,
+      "春秋 / jinwen": 1,
+      "春秋中期 / jinwen": 1
+    },
+    "image_failures": []
+  },
+  "export": {
+    "character_count": 51,
+    "glyph_count": 937,
+    "image_file_count": 937,
+    "layout": "character-stage-v1",
+    "output": "/home/dxlab/gitclone/character/data/dataset_51_pilot",
+    "reused": false
+  }
+}

@@ -12,6 +12,7 @@ dependencies = ["SQLAlchemy>=2,<3", "alembic>=1.13,<2", "pydantic>=2,<3", "typer
 [project.optional-dependencies]
 collection = ["requests>=2.31,<3", "selenium>=4.20,<5"]
 test = ["pytest>=8,<10"]
+ml = ["torch>=2.5,<3", "diffusers>=0.35,<1", "numpy>=1.26,<3"]
 
 [project.scripts]
 hanzi = "hanzi_evolution.cli:app"

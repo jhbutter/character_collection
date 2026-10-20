@@ -108,9 +108,24 @@ def test_run_stops_and_reports_when_preflight_is_blocked(expand_module, monkeypa
                            max_images=100, interval=7, output=tmp_path / "dataset",
                            no_export=True, no_modern_reference=False)
     assert expand_module.run(args) == 2
-    state = json.loads((tmp_path / "reports/expand_50.json").read_text(encoding="utf-8"))
+    state = json.loads((tmp_path / "reports/batch.json").read_text(encoding="utf-8"))
     assert state["status"] == "blocked"
     assert state["downloaded_this_run"] == 0
     assert state["character_count"] == 0
-    assert (tmp_path / "reports/expand_50.md").exists()
+    assert (tmp_path / "reports/batch.md").exists()
     assert (tmp_path / "batch/status.json").exists()
+
+
+def test_cross_source_budget_includes_modern_reference(expand_module, monkeypatch, tmp_path):
+    glyph = SimpleNamespace(image_url="https://example.invalid/glyph.png")
+    reference = SimpleNamespace(image_url="https://example.invalid/reference.png")
+    monkeypatch.setattr(expand_module, "result_pages", lambda *a, **kw:
+                        ({"modern_reference": reference}, [glyph], []))
+    monkeypatch.setattr(expand_module, "select_missing_styles", lambda glyphs, rows: glyphs)
+    monkeypatch.setattr(expand_module, "export_rows", lambda *a: [])
+    monkeypatch.setattr(expand_module, "attach_images", lambda *a: pytest.fail("budget check must precede download"))
+    args = SimpleNamespace(max_images=100, no_modern_reference=False)
+    state = {"downloaded_this_run": 99}
+    with pytest.raises(expand_module.BudgetReached):
+        expand_module.import_collection(None, None, None, "yanbian", "一", tmp_path,
+                                        {}, state, args)

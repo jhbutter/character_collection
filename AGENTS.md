@@ -43,3 +43,18 @@
 - 十字补采已完成：一上旁下示彔元天吏帝，金文/小篆/隶变/字形演变40组查询全部complete。当时data/dataset为232图（每字每字体≤5），数据库336条关联、328张不同原图。新增154条关联/154张新原图，现代楷书参考共10张仍独立于历史楷书。
 - scripts/complete_ten.py默认不联网，--execute补采已核验10字，默认输出data/dataset；每批最多100张新图，7秒间隔。记录在data/batches/complete_ten；以原编号:fill5-v1作为补充导入local_id，原编号另存raw_head及包source_record_id，不覆盖既有证据。来源不足5张如实记录。
 - 已清理data/demo、data/demo_input、data/exports和.DS_Store，以及本轮中间快照。65项测试通过，复跑0下载/0新增，数据库和档案哈希检查通过。详见reports/complete_ten.md。历史的78图、182图等描述仅为阶段性记录。
+
+- 书体转换 PoC 新增 `src/hanzi_evolution/ml/style_ddpm.py` 和 `scripts/style_ddpm.py`：64×64 条件 DDPM，训练依赖为 `.[ml]`；清单按字头 train/val/test 隔离，checkpoint 绑定清单 SHA-256，生成图仅为候选、不入真实史料库。
+- 2026-10-19 条件 DDPM 首轮训练：四书体、64×64、约22.1M参数，train35/val7/test8字；最佳验证在3500步，4500步停止（0号RTX3090满载达90°C且验证回升）。8个test字未可靠保持字头；报告见reports/style_ddpm_poc.md，模型/对照图在data/ml/style_ddpm，禁止当真实史料入库。88项测试通过。
+
+- 2026-10-19 FontDiffuser 官方预训练权重微调试验：上游独立仓库在 ignored `thirdparty/fontdiffuser`，权重和隔离环境在 ignored `data/ml/fontdiffuser`；入口 `scripts/finetune_fontdiffuser.py`，实现 `src/hanzi_evolution/ml/fontdiffuser_adapter.py`。风格参考来自训练集同一实际字库、不同字头；21 对因缺参考跳过，有效 train515/val97/test102。只训练 U-Net，两个 encoder 冻结并保持 eval。详见 `docs/fontdiffuser_finetune.md` 和 `reports/fontdiffuser_finetune_poc.md`；仅作非商业研究与候选图，不当作史料。
+- FontDiffuser 有效实验为 `data/ml/fontdiffuser/run_003`：GPU1、500步、batch2、峰值预留显存2.777GiB；固定16例 val 损失由官方原始权重0.009807降至0.006691。留出字“八→甲骨文”“旁→小篆”生成图仍未可靠匹配目标结构，不能当作字形正确的证明。微调相关代码完成后主项目 `.venv/bin/pytest -q` 为89项通过，`git diff --check` 通过。
+
+- 2026-10-19 FontDiffuser 结构原型输入对照：`compare-prototype` 固定目标/风格参考/seed，在同字同书体不同实际字库且不同SHA的真实图之间比较楷书与目标书体原型输入；当前只有金文6个test字满足。旁、祭在官方权重和run_003上都显示输出随原型明显变化，但未可靠匹配目标。该实验使用test字的真实目标书体信息，属于oracle辅助，不证明未知古文字构型可推演；图见`data/ml/fontdiffuser/prototype_comparison`，报告见`reports/fontdiffuser_prototype_input.md`。
+
+- 目标书体原型微调 `data/ml/fontdiffuser/run_004_prototype`：`train --content-mode prototype` 仅用金文同字跨字库且不同SHA配对，train105/23字、val25/5字、test28/6字；GPU1、300步、batch2。固定每字一例的val损失官方0.040294、旧楷书微调0.032477、原型微调0.029980；test官方0.006213、旧楷书微调0.005072、原型微调0.005130。旁/祭生成图仍未稳定接近目标，不支持继续仅延长训练；详见`reports/fontdiffuser_prototype_input.md`。
+- FontDiffuser 失败诊断补充：金文“旁/祭”即使以真实目标图本身为Content Encoder输入，官方权重自重建墨迹IoU仅0.2271/0.1967，run_004原型微调仅0.1837/0.1879；guidance 1–7.5和更复杂参考字未稳定改善目标匹配。不要宣称原型微调有效，也不要仅延长此配置训练；报告已追加到`reports/fontdiffuser_prototype_input.md`，诊断图在ignored `data/ml/fontdiffuser/self_reconstruction`与`reference_sweep`。
+- 2026-10-19 用户要求暂不考虑金文；非金文留出字检查见`reports/fontdiffuser_non_jinwen_check.md`。官方→run_003固定每test字头一例的去噪损失：甲骨文0.006703→0.005629、隶书0.008087→0.006879、小篆0.007102→0.005725；八/旁隶书新增对照图仍无清楚构型改善。三类缺少足够的同字跨字库原型，不能照搬金文实验；后续优先非金文且以视觉/人工判读为准。
+
+- 2026-10-20 已完成100字后台批次：数据库100个有图字头、2019条图像关联、2011张不同原图；甲骨文/金文/小篆/隶书覆盖100/83/99/87字，77字四体齐全。当前目录data/dataset_100_screen（汉字优先）和data/dataset_100_by_style（字体优先）各1911图，全部仍待审核、publishable_glyph_count=0。完整批次证据保留在data/batches/expand_100_screen，报告见reports/expand_100_screen.md。
+- 2026-10-20 清理中间产物：已删除data/dataset_50_smoke11、dataset_51_pilot、dataset_53_pilot、dataset_60_screen，以及FontDiffuser无效run_001/run_002/smoke_001、style_ddpm烟测运行和有效运行的latest.pt；保留10/50字历史正式快照、100字两种布局、原始档案/数据库/原图、官方权重/隔离环境、run_003/run_004_prototype及style_ddpm/run_001的best.pt。历史报告中的已删快照路径仅为当时记录。详情见reports/cleanup_2026_10_20.md。

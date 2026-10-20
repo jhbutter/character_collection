@@ -1,0 +1,601 @@
+{
+  "started_at": "2026-10-19T13:48:41.805094+00:00",
+  "status": "finished",
+  "phase": "cross",
+  "target": 60,
+  "range": [
+    70,
+    110
+  ],
+  "oracle_limit": 5,
+  "downloaded_this_run": 15,
+  "oracle_records": [],
+  "cross_records": [
+    {
+      "character": "釆",
+      "source": "jinwen",
+      "status": "already_full",
+      "available": 5,
+      "selected": 0,
+      "styles": {}
+    },
+    {
+      "character": "釆",
+      "source": "xiaozhuan",
+      "status": "already_full",
+      "available": 2,
+      "selected": 0,
+      "styles": {}
+    },
+    {
+      "character": "釆",
+      "source": "lishu",
+      "status": "no_result",
+      "available": 0,
+      "selected": 0
+    },
+    {
+      "character": "釆",
+      "source": "yanbian",
+      "status": "already_full",
+      "available": 6,
+      "selected": 0,
+      "styles": {}
+    },
+    {
+      "character": "牛",
+      "source": "jinwen",
+      "status": "already_full",
+      "available": 16,
+      "selected": 0,
+      "styles": {}
+    },
+    {
+      "character": "牛",
+      "source": "xiaozhuan",
+      "status": "already_full",
+      "available": 1,
+      "selected": 0,
+      "styles": {}
+    },
+    {
+      "character": "牛",
+      "source": "lishu",
+      "status": "already_full",
+      "available": 11,
+      "selected": 0,
+      "styles": {}
+    },
+    {
+      "character": "牛",
+      "source": "yanbian",
+      "status": "already_full",
+      "available": 16,
+      "selected": 0,
+      "styles": {}
+    },
+    {
+      "character": "牡",
+      "source": "jinwen",
+      "status": "already_full",
+      "available": 3,
+      "selected": 0,
+      "styles": {}
+    },
+    {
+      "character": "牡",
+      "source": "xiaozhuan",
+      "status": "already_full",
+      "available": 1,
+      "selected": 0,
+      "styles": {}
+    },
+    {
+      "character": "牡",
+      "source": "lishu",
+      "status": "already_full",
+      "available": 12,
+      "selected": 0,
+      "styles": {}
+    },
+    {
+      "character": "牡",
+      "source": "yanbian",
+      "status": "already_full",
+      "available": 16,
+      "selected": 0,
+      "styles": {}
+    },
+    {
+      "character": "犅",
+      "source": "jinwen",
+      "status": "already_full",
+      "available": 3,
+      "selected": 0,
+      "styles": {}
+    },
+    {
+      "character": "犅",
+      "source": "xiaozhuan",
+      "status": "already_full",
+      "available": 1,
+      "selected": 0,
+      "styles": {}
+    },
+    {
+      "character": "犅",
+      "source": "lishu",
+      "status": "no_result",
+      "available": 0,
+      "selected": 0
+    },
+    {
+      "character": "犅",
+      "source": "yanbian",
+      "status": "already_full",
+      "available": 4,
+      "selected": 0,
+      "styles": {}
+    },
+    {
+      "character": "牝",
+      "source": "jinwen",
+      "status": "no_result",
+      "available": 0,
+      "selected": 0
+    },
+    {
+      "character": "牝",
+      "source": "xiaozhuan",
+      "status": "already_full",
+      "available": 1,
+      "selected": 0,
+      "styles": {}
+    },
+    {
+      "character": "牝",
+      "source": "lishu",
+      "status": "already_full",
+      "available": 9,
+      "selected": 0,
+      "styles": {}
+    },
+    {
+      "character": "牝",
+      "source": "yanbian",
+      "status": "already_full",
+      "available": 15,
+      "selected": 0,
+      "styles": {}
+    },
+    {
+      "character": "牲",
+      "source": "jinwen",
+      "status": "already_full",
+      "available": 6,
+      "selected": 0,
+      "styles": {}
+    },
+    {
+      "character": "牲",
+      "source": "xiaozhuan",
+      "status": "already_full",
+      "available": 1,
+      "selected": 0,
+      "styles": {}
+    },
+    {
+      "character": "牲",
+      "source": "lishu",
+      "status": "already_full",
+      "available": 4,
+      "selected": 0,
+      "styles": {}
+    },
+    {
+      "character": "牲",
+      "source": "yanbian",
+      "status": "already_full",
+      "available": 8,
+      "selected": 0,
+      "styles": {}
+    },
+    {
+      "character": "牢",
+      "source": "jinwen",
+      "status": "complete",
+      "available": 3,
+      "selected": 3,
+      "styles": {
+        "jinwen": 3
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 3
+    },
+    {
+      "character": "牢",
+      "source": "xiaozhuan",
+      "status": "complete",
+      "available": 1,
+      "selected": 1,
+      "styles": {
+        "xiaozhuan": 1
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 1
+    },
+    {
+      "character": "牢",
+      "source": "lishu",
+      "status": "complete",
+      "available": 11,
+      "selected": 7,
+      "styles": {
+        "qinwenzi": 2,
+        "lishu": 5
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 7
+    },
+    {
+      "character": "牢",
+      "source": "yanbian",
+      "status": "complete",
+      "available": 16,
+      "selected": 2,
+      "styles": {
+        "chuwenzi": 1,
+        "zhanguowenzi": 1
+      },
+      "records_imported": 1,
+      "records_skipped": 0,
+      "glyphs_imported": 2
+    }
+  ],
+  "characters": [
+    {
+      "character": "釆",
+      "collections": {
+        "jinwen": {
+          "source": "jinwen",
+          "status": "already_full",
+          "available": 5,
+          "selected": 0,
+          "styles": {}
+        },
+        "xiaozhuan": {
+          "source": "xiaozhuan",
+          "status": "already_full",
+          "available": 2,
+          "selected": 0,
+          "styles": {}
+        },
+        "lishu": {
+          "source": "lishu",
+          "status": "no_result",
+          "available": 0,
+          "selected": 0
+        },
+        "yanbian": {
+          "source": "yanbian",
+          "status": "already_full",
+          "available": 6,
+          "selected": 0,
+          "styles": {}
+        }
+      }
+    },
+    {
+      "character": "牛",
+      "collections": {
+        "jinwen": {
+          "source": "jinwen",
+          "status": "already_full",
+          "available": 16,
+          "selected": 0,
+          "styles": {}
+        },
+        "xiaozhuan": {
+          "source": "xiaozhuan",
+          "status": "already_full",
+          "available": 1,
+          "selected": 0,
+          "styles": {}
+        },
+        "lishu": {
+          "source": "lishu",
+          "status": "already_full",
+          "available": 11,
+          "selected": 0,
+          "styles": {}
+        },
+        "yanbian": {
+          "source": "yanbian",
+          "status": "already_full",
+          "available": 16,
+          "selected": 0,
+          "styles": {}
+        }
+      }
+    },
+    {
+      "character": "牡",
+      "collections": {
+        "jinwen": {
+          "source": "jinwen",
+          "status": "already_full",
+          "available": 3,
+          "selected": 0,
+          "styles": {}
+        },
+        "xiaozhuan": {
+          "source": "xiaozhuan",
+          "status": "already_full",
+          "available": 1,
+          "selected": 0,
+          "styles": {}
+        },
+        "lishu": {
+          "source": "lishu",
+          "status": "already_full",
+          "available": 12,
+          "selected": 0,
+          "styles": {}
+        },
+        "yanbian": {
+          "source": "yanbian",
+          "status": "already_full",
+          "available": 16,
+          "selected": 0,
+          "styles": {}
+        }
+      }
+    },
+    {
+      "character": "犅",
+      "collections": {
+        "jinwen": {
+          "source": "jinwen",
+          "status": "already_full",
+          "available": 3,
+          "selected": 0,
+          "styles": {}
+        },
+        "xiaozhuan": {
+          "source": "xiaozhuan",
+          "status": "already_full",
+          "available": 1,
+          "selected": 0,
+          "styles": {}
+        },
+        "lishu": {
+          "source": "lishu",
+          "status": "no_result",
+          "available": 0,
+          "selected": 0
+        },
+        "yanbian": {
+          "source": "yanbian",
+          "status": "already_full",
+          "available": 4,
+          "selected": 0,
+          "styles": {}
+        }
+      }
+    },
+    {
+      "character": "牝",
+      "collections": {
+        "jinwen": {
+          "source": "jinwen",
+          "status": "no_result",
+          "available": 0,
+          "selected": 0
+        },
+        "xiaozhuan": {
+          "source": "xiaozhuan",
+          "status": "already_full",
+          "available": 1,
+          "selected": 0,
+          "styles": {}
+        },
+        "lishu": {
+          "source": "lishu",
+          "status": "already_full",
+          "available": 9,
+          "selected": 0,
+          "styles": {}
+        },
+        "yanbian": {
+          "source": "yanbian",
+          "status": "already_full",
+          "available": 15,
+          "selected": 0,
+          "styles": {}
+        }
+      }
+    },
+    {
+      "character": "牲",
+      "collections": {
+        "jinwen": {
+          "source": "jinwen",
+          "status": "already_full",
+          "available": 6,
+          "selected": 0,
+          "styles": {}
+        },
+        "xiaozhuan": {
+          "source": "xiaozhuan",
+          "status": "already_full",
+          "available": 1,
+          "selected": 0,
+          "styles": {}
+        },
+        "lishu": {
+          "source": "lishu",
+          "status": "already_full",
+          "available": 4,
+          "selected": 0,
+          "styles": {}
+        },
+        "yanbian": {
+          "source": "yanbian",
+          "status": "already_full",
+          "available": 8,
+          "selected": 0,
+          "styles": {}
+        }
+      }
+    },
+    {
+      "character": "牢",
+      "collections": {
+        "jinwen": {
+          "source": "jinwen",
+          "status": "complete",
+          "available": 3,
+          "selected": 3,
+          "styles": {
+            "jinwen": 3
+          },
+          "records_imported": 1,
+          "records_skipped": 0,
+          "glyphs_imported": 3
+        },
+        "xiaozhuan": {
+          "source": "xiaozhuan",
+          "status": "complete",
+          "available": 1,
+          "selected": 1,
+          "styles": {
+            "xiaozhuan": 1
+          },
+          "records_imported": 1,
+          "records_skipped": 0,
+          "glyphs_imported": 1
+        },
+        "lishu": {
+          "source": "lishu",
+          "status": "complete",
+          "available": 11,
+          "selected": 7,
+          "styles": {
+            "qinwenzi": 2,
+            "lishu": 5
+          },
+          "records_imported": 1,
+          "records_skipped": 0,
+          "glyphs_imported": 7
+        },
+        "yanbian": {
+          "source": "yanbian",
+          "status": "complete",
+          "available": 16,
+          "selected": 2,
+          "styles": {
+            "chuwenzi": 1,
+            "zhanguowenzi": 1
+          },
+          "records_imported": 1,
+          "records_skipped": 0,
+          "glyphs_imported": 2
+        }
+      }
+    }
+  ],
+  "finished_at": "2026-10-19T13:50:42.327003+00:00",
+  "character_count": 60,
+  "network_records": 176,
+  "not_attempted_ids": [
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95,
+    96,
+    97,
+    98,
+    99,
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+  ],
+  "quality": {
+    "character_count_including_test": 60,
+    "real_glyph_count": 1207,
+    "real_with_image_character_count": 60,
+    "real_image_count": 1199,
+    "test_glyph_count": 0,
+    "publishable_glyph_count": 0,
+    "unique_image_count_including_test": 1199,
+    "image_validity_rate": 1.0,
+    "source_traceability_rate": 1.0,
+    "coverage": {
+      "unknown / jiaguwen": 350,
+      "商代晚期 / jinwen": 54,
+      "unknown / xiaozhuan": 67,
+      "unknown / shuowen_guwen": 13,
+      "秦 / qinwenzi": 88,
+      "西漢 / lishu": 146,
+      "秦 / lishu": 18,
+      "商 / jiaguwen": 10,
+      "西周早期 / jinwen": 78,
+      "戰國.齊 / zhanguowenzi": 19,
+      "戰國.楚 / chuwenzi": 89,
+      "unknown / kaishu_reference": 60,
+      "戰國.秦 / zhanguowenzi": 16,
+      "unknown / lishu": 14,
+      "unknown / jinwen": 15,
+      "西周中期 / jinwen": 36,
+      "西周晚期 / jinwen": 17,
+      "東漢 / lishu": 41,
+      "戰國.晉 / zhanguowenzi": 24,
+      "戰國.燕 / zhanguowenzi": 9,
+      "unknown / shuowen_zhouwen": 5,
+      "戰國.楚 / zhanguowenzi": 2,
+      "春秋晚期 / jinwen": 16,
+      "unknown / zhanguowenzi": 8,
+      "西周 / jinwen": 2,
+      "孫吳 / lishu": 1,
+      "新莽 / lishu": 2,
+      "戰國 / zhanguowenzi": 4,
+      "春秋 / jinwen": 1,
+      "春秋中期 / jinwen": 2
+    },
+    "image_failures": []
+  },
+  "export": {
+    "character_count": 60,
+    "glyph_count": 1103,
+    "image_file_count": 1103,
+    "layout": "character-stage-v1",
+    "output": "/home/dxlab/gitclone/character/data/dataset_60_screen",
+    "reused": false
+  }
+}

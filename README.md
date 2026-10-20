@@ -2,7 +2,7 @@
 
 本地 SQLite 系统，加上 `thirdparty/xiaoxue_crawler` 中直接调试的第三方采集项目。完整规划见 [docs/plan.md](docs/plan.md)。
 
-**当前数据库50个字头、1023条图像关联记录、1015张不同原图。** 50字交付目录 `data/dataset_50` 为919张图片；按字体优先布局 `data/dataset_50_by_style` 同为50字/919图；10字历史快照 `data/dataset` 保留232张。已完成甲骨文编号1–10，并从11–64号中补出40个新增字头；同时完成金文、小篆、隶变、字形演变4个来源的查询，含50条明确分离的现代楷书参考。最终目录按每汉字每字体最多5张筛选，图片校验通过。映射、逐图许可和学术对应关系仍待审阅，默认正式导出不包含这些待审记录。这是50字的阶段性验证，不是100字试点或完整数据集。
+**当前数据库100个有图字头、2019条图像关联记录、2011张不同原图。** 100字汉字优先目录 `data/dataset_100_screen` 与字体优先目录 `data/dataset_100_by_style` 各有1911张图片，均按每字每书体最多5张筛选；数据库和原始档案保留全部记录。较早的10字与50字正式快照仍保留，烟测和51/53/60字过渡快照已清理。甲骨文、金文、小篆、隶书分别覆盖100、83、99、87字；77字四类齐全。映射、逐图许可和学术对应关系仍待审阅，默认正式导出不包含这些待审记录。当前100字采集结果见[报告](reports/expand_100_screen.md)，清理范围见[清理记录](reports/cleanup_2026_10_20.md)。
 
 2026-10-19 曾对 robots 的只读探测返回 HTTP 401，页面明示本机 IP 被封禁；同日恢复访问后完成扩字。期间修正了 PUA 外字覆盖标准字头、多个标准字头选择、空 `StartOrder` 零结果页等问题，详见 [来源审计](docs/source_audit.md)。
 
@@ -10,7 +10,7 @@
 
 ## 安装
 
-Python 3.11+；本次实测 macOS arm64 / Python 3.14.6。
+Python 3.11+；已在 macOS arm64 / Python 3.14.6 和 Linux x86_64 / Python 3.13.9 验证核心包。训练使用 Linux 主机的 RTX 3090。
 
 ```bash
 python3 -m venv .venv
@@ -70,11 +70,11 @@ hanzi import-legacy data/thirdparty_debug/collected/jiaguwen/jiaguwen.jsonl \
   --image-root data/thirdparty_debug/collected/jiaguwen/img
 ```
 
-`--limit` 在 read_font.py 中是结束编号，在 download_img.py 中是图片数量上限。默认不联网，显式 --execute 才执行；请求间隔默认7秒。重复执行跳过已写入的编号。当前 HTTP 模式已验证甲骨文编号1–10，包括4个双页字头；按真实HiddenFrom/PageTo表单翻页并核对字形总数、页数及重复实例。金文、小篆、隶变和字形演变已有独立跨来源入口，当前50字均已完成查询；继续扩大字表及Selenium线上模式仍需验证。
+`--limit` 在 read_font.py 中是结束编号，在 download_img.py 中是图片数量上限。默认不联网，显式 --execute 才执行；请求间隔默认7秒。重复执行跳过已写入的编号。当前 HTTP 模式已验证甲骨文编号1–10，包括4个双页字头；按真实HiddenFrom/PageTo表单翻页并核对字形总数、页数及重复实例。金文、小篆、隶变和字形演变已有独立跨来源入口，当前100字均已完成查询；继续扩大字表及Selenium线上模式仍需验证。
 
 修复了旧 GET 仅预填表单却不查询、未闭合 td 导致出处串联、站内编号冒充字头、Chrome 参数过时、文件名写死及错误页空成功等问题。常规 HTTP 即可完成本条查询，无需浏览器。ChromeDriver 下载卡住的试跑已终止。
 
-主系统的 `hanzi crawl` 尚未接入该第三方采集器，仍仅 dry-run；独立批次入口已验证10字头，主CLI接入、长期调度和全站访问审计尚未完成。
+主系统的 `hanzi crawl` 仍仅 dry-run；实际续采可用 `hanzi collect-expand --execute`。当前已完成100字采集，继续扩大字表需要新的首次查询核验。长期调度和全站访问审计尚未完成。
 
 ## 导入其他本地资料
 
@@ -114,7 +114,7 @@ python scripts/build_style_pairs.py
 
 当前为 **50 个楷书参考、735 对唯一目标图**，按汉字划分为 train 35 / val 7 / test 8；其中 37 个字四种书体都有。清单在 `data/ml/style_pairs/manifest.jsonl`，图片路径相对 `data/`，不进入 Git。
 
-这是**书体风格转换**，不是历史年代推演；输入和目标都是字库渲染图，不是拓片或原物照片。模型路线、预处理和评估见 [字体转换实验说明](docs/ml_style_translation.md)。当前 `.venv` 尚未安装 PyTorch/diffusers，训练未开始。
+这是**书体风格转换**，不是历史年代推演；输入和目标都是字库渲染图，不是拓片或原物照片。模型路线、预处理和评估见 [字体转换实验说明](docs/ml_style_translation.md)。已加入 64×64 条件 DDPM 的训练、候选图生成与留出字头评估入口 `scripts/style_ddpm.py`，依赖为 `.[ml]`。首轮训练的最佳验证 checkpoint 在 3500 步；8 个测试字的生成图未可靠保持字头，详见 [实验报告](reports/style_ddpm_poc.md)。 另已用 [FontDiffuser 官方预训练权重](docs/fontdiffuser_finetune.md)完成隔离微调和留出字生成；运行指标与图像对照见 [微调报告](reports/fontdiffuser_finetune_poc.md)。 追加的[金文结构原型输入对照](reports/fontdiffuser_prototype_input.md)显示输入构型对生成有明显影响，但仍未可靠匹配真实目标。
 
 ## 后续工作
 

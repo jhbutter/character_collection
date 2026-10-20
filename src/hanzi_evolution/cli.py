@@ -139,6 +139,7 @@ def validate_images(db: DB = Path("data/hanzi.sqlite"), root: ROOT = Path("data"
         raise typer.Exit(1)
 
 
+@app.command("collect-expand")
 @app.command("collect-expand50")
 def collect_expand50(
     execute: Annotated[bool, typer.Option(help="联网执行；默认 dry-run")] = False,
@@ -151,8 +152,9 @@ def collect_expand50(
     output: Annotated[Path, typer.Option()] = Path("data/dataset_50"),
     modern_reference: Annotated[bool, typer.Option("--modern-reference/--no-modern-reference")] = True,
     export: Annotated[bool, typer.Option("--export/--no-export")] = True,
+    new_only: Annotated[bool, typer.Option("--new-only/--all-characters")] = False,
 ):
-    """扩展当前 10 字到 50 个有图字头；默认只做 dry-run。"""
+    """按甲骨文编号扩采字头，再采金文、小篆、隶变及字形演变；默认 dry-run。"""
     if start_id < 1 or not 0 <= end_id - start_id < 100:
         raise typer.BadParameter("编号范围必须从 1 开始且最多 100 个编号")
     if interval < 5:
@@ -167,7 +169,7 @@ def collect_expand50(
     args = SimpleNamespace(folder=folder, start_id=start_id, end_id=end_id,
                            target=target, max_images=max_images, interval=interval,
                            output=output, no_modern_reference=not modern_reference,
-                           no_export=not export)
+                           no_export=not export, new_only=new_only)
     raise typer.Exit(run(args))
 
 

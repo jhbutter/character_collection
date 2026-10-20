@@ -166,6 +166,8 @@ def import_collection(engine, driver, source, collection, character, folder,
         return {"source": collection, "status": "no_result", "available": 0, "selected": 0}
     selected = select_missing_styles(glyphs, export_rows(engine, True))
     pending = pending_downloads(selected, known_images, folder)
+    if first.get("modern_reference") and not args.no_modern_reference:
+        pending += pending_downloads([first["modern_reference"]], known_images, folder)
     if state["downloaded_this_run"] + pending > args.max_images:
         raise BudgetReached("本批新图预算不足以完成该跨来源记录，下次续跑")
     selected = attach_images(selected, driver, folder, known_images, state, args)
@@ -247,8 +249,13 @@ def collect_cross(engine, driver, args, state, known_images, folder):
             select(schema.character.c.id, schema.character.c.label)
             .select_from(schema.character.join(schema.glyph).join(schema.glyph_image))
             .distinct().order_by(schema.character.c.id))]
-    characters = characters[:args.target]
-    if len(characters) < args.target:
+    if getattr(args, "new_only", False):
+        batch_characters = [oracle_character(engine, index)
+                            for index in range(args.start_id, args.end_id + 1)]
+        characters = list(dict.fromkeys(character for character in batch_characters if character))
+    else:
+        characters = characters[:args.target]
+    if not getattr(args, "new_only", False) and len(characters) < args.target:
         state.update(status="shortfall", phase="cross",
                      error=f"仅有 {len(characters)} 个有图字头，未达到 {args.target}")
         return
@@ -368,9 +375,11 @@ def run(args):
         state["not_attempted_ids"] = [index for index in range(args.start_id, args.end_id + 1)
                                       if index not in recorded and not oracle_exists(engine, index)]
         state["quality"] = report(engine, PROJECT / "data")
+        save_json(PROJECT / "reports/current_quality.json", state["quality"])
         save_json(folder / "status.json", state)
-        save_json(PROJECT / "reports/expand_50.json", state)
-        write_markdown(state, PROJECT / "reports/expand_50.md")
+        report_name = folder.name
+        save_json(PROJECT / "reports" / f"{report_name}.json", state)
+        write_markdown(state, PROJECT / "reports" / f"{report_name}.md")
         if state["status"] == "finished" and not args.no_export:
             try:
                 state["export"] = write_directory_export(
@@ -379,7 +388,7 @@ def run(args):
                 state["export_error"] = str(error)
                 state["status"] = "export_error"
             save_json(folder / "status.json", state)
-            save_json(PROJECT / "reports/expand_50.json", state)
+            save_json(PROJECT / "reports" / f"{report_name}.json", state)
         engine.dispose()
     print(json.dumps({"status": state["status"], "character_count": state["character_count"],
                       "downloaded": state["downloaded_this_run"],
@@ -400,6 +409,8 @@ def main():
     parser.add_argument("--output", type=Path, default=PROJECT / "data/dataset_50")
     parser.add_argument("--no-modern-reference", action="store_true")
     parser.add_argument("--no-export", action="store_true")
+    parser.add_argument("--new-only", action="store_true",
+                        help="跨来源仅查询本批甲骨文编号对应字头，适合扩到50字之后续采")
     args = parser.parse_args()
     if args.start_id < 1 or not 0 <= args.end_id - args.start_id < 100:
         parser.error("编号范围必须从 1 开始且最多 100 个编号")
